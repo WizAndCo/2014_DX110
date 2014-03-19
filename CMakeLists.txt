@@ -35,7 +35,10 @@ target_link_libraries(premiereapp ${OGRE_LIBRARY} ${OIS_LIBRARY})
 
 set( RESOURCES_FILE
   media/
-  resources/
+  plugins/
+  resources/ogre.cfg
+  resources/plugins.cfg
+  resources/resources.cfg
 )
 
 # do the copying
