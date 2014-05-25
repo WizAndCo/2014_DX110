@@ -31,7 +31,7 @@ add_executable (
 )
 
 # Et pour finir, on lie l'excutable avec les librairies que find_package nous a gentillement trouv.
-target_link_libraries(premiereapp ${OGRE_LIBRARY} ${OIS_LIBRARY})
+target_link_libraries(premiereapp ${OGRE_LIBRARY} ${OIS_LIBRARY} -lboost_system)
 
 set( RESOURCES_FILE
   media/
