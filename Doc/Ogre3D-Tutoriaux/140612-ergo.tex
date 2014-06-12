@@ -55,11 +55,11 @@
 \section*{Pr\'esentation du document}
 This document is a re-lecture of the tutorial \href{http://fr.openclassrooms.com/informatique/cours/decouvrez-ogre-3d}{''D\'ecouvrez Ogre 3D''}. The original tutorial was written by Julien Chichignoud on \href{fr.openclassrooms.com}{Openclassroom} (aka ''Le site des z\'eros'').\newline
 
-Writing this document was an attempt to make something like an active reading, and thus have a more attentive lecture and deepest understanding of Ogre's concepts. We modified a lot (sentences, structure, ...) but the essence is the same as the original tutorial.\newline
+Writing this document is an attempt to make something like an active reading, and thus have a more attentive lecture and deepest understanding of Ogre's concepts. We modified a lot (sentences, structure, ...) but the essence is the same as the original tutorial.\newline
 
-We wish to highligh the fact that this document is a personal interpretation, as the implementation.\newline
+We wish to highligh the fact that this document is a personal interpretation, and a in progress work.\newline
 
-The original tutorial is in French and as we spent the most of our strength in the comprehension of Ogre we did not take time to translate the original tutorial in French.\newline
+The original tutorial is in French and as we are spending most of our strength in the comprehension of Ogre we did not take time to translate the original tutorial in French.\newline
 
 
 \section*{Licence}
@@ -68,74 +68,6 @@ The original tutorial is released under the
 
 The rest of the document will be now in French, sorry for those who cannot take advantage of the document.
 
-
-
-\part{A Corriger}
-\begin{enumerate}
-\item Il manque un espace entre OGRE et le premier mot qui le suit dns les titres des 2 premieres parties
-
-\item Je ne pense pas que garder ''OGRE'' dans le titre de la 2nd partie se justifie
-
-%\item ''CMakeLists.txt donn\`e'' \`a corriger par ''CMakeLists.txt donnéE''
-
-%\item le tilde de la phrase ''sous Ubuntu. Les lignes commencant par \#'' est compris comme tilde accent du s qui suit
-
-%\item ''Ce code de base est en fait le meme'', il mqn un accent circonflexe
-
-\item ''sauf qu'alors on avait que un seul code dans le chapitre Premiere Compilation ici on a un fichier.h qui est inclus dans le fichier main.cpp.'' \`a remplacer par ''mis \`a part le fait qu´on a ici un fichier include''
-
-%\item Il mnq les accents dans le titre de 3.2.1
-
-%\item Il mnq les accents dans le titre de 3.3
-%% ? \item Il mnq les accents dans le titre de 3.5
-
-%\item Tous les c c\'edille sont pass\'es \`a la trappe
-
-%\item Faire un retour \`a la ligne apr\`es Ogre dans 3.2.3 ''reconnu par Ogre. Le fichier que j'ai choisi se trouve''
-
-%\item Tous les i accent circonflexe sont pass\'es \`a la trappe
-%\item
-%\item
-%\item
-%\item
-\end{enumerate}
-
-
-
-\part{A Eclaircir}
-\begin{enumerate}
-\item Dans 3.2.2 il est dit que l´ex ExapleApplication a une instance msceneMgr de l´objet sceneManager mais je ne vois aucune instance de cet objet dans le code inclus dans mon fichier pdf
-%\item
-%\item
-%\item
-%\item
-\end{enumerate}
-
-
-
-\begin{comment}
-\part{A Essayer}
-Essayer d´ins\'erer le code suivant dans le code d´exemple une tete devrait etre affich\'ee:
-Entity *head= msceneMgr->createEntity(''Tete'', ''ogrehead.mesh'' ) ;
-sceneNode *node= msceneMgr->getRootsceneNode( )->createChildsceneNode( ''nodeTete '' , Vector3 : :ZERO, Quaternion : : IDENTITY) ;
-node->attachObject ( head );
-
-
-
-Essayer d´ins\'erer le code suivant dans le code d´exemple un plan recouvert d´herbe devrait etre cr\'e\'e:
-Plane plan ( Vector3 : :UNIT_Y, 0) ;
-MeshManager : : g e t S i ng l e t o n ( ) . c r e a t ePl ane ( '' s o l '' ,  -
-ResourceGroupManager : :DEFAULT_RESOURCE_GROUP_NAME,  -
-plan , 500 , 500 , 1 , 1 , true , 1 , 1 , 1 , Vector3 : :UNIT_Z) -
-;
-
-Entity *ent= msceneMgr->c r e a t eEnt i t y ( '' Ent i t eSo l '' , '' s o l '' ) ;
-ent->setMaterialName ( ''Examples/GrassFloor '' ) ;
-node = msceneMgr->getRootsceneNode ( )->createChi ldsceneNode ( ) ;
-node->at tachObj e c t ( ent ) ;
-
-
-\end{comment}
 
 
 
@@ -427,7 +359,7 @@ Notez qu'aucun des param\`etres de la m\'ethode n'est obligatoire, pour informat
 \end{itemize}
 	
 
-Sachez pour le moment qu'un quaternion est un objet math\'ematique qui permet de faire faire aux objets des rotations dans l'espace\footnote{Que des rotations?}. Quaternion::IDENTITY \footnote{comment \'ecrire Quaternion::IDENTITY de manière élégante?}lui dit de ne pas faire de rotation.\newline
+Sachez pour le moment qu'un quaternion est un objet math\'ematique qui permet de faire faire aux objets des rotations dans l'espace\footnote{Que des rotations?}. Quaternion::IDENTITY \footnote{comment \'ecrire Quaternion::IDENTITY de manière \'el\'egante?}lui dit de ne pas faire de rotation.\newline
 
 Avec ce code en main, vous pouvez simplement attacher l'entit\'e pr\'ec\'edemment cr\'e\'ee au noeud avec la ligne suivante:
 
@@ -440,7 +372,33 @@ En compilant, vous devriez voir la t\^ete d'un ogre au milieu de l'\'ecran. Vous
 
 
 \subsection{Code}
-Donnez le code r\'ecapitulatif serait pas mal ici\footnote{Donnez le code récapitulatif serait pas mal}
+
+\subsubsection{PremiereApplication.cpp}
+\begin{lstlisting}[caption={PremiereApplication.cpp: Instanciation d'entit\'e}]
+#include "PremiereApplication.h"
+
+void PremiereApplication::createScene()
+{
+    //creation d une entite
+    Entity *head= mSceneMgr->createEntity("Tete", "ogrehead.mesh" );
+    
+    //creation d un noeud
+    SceneNode *node= mSceneMgr->getRootSceneNode( )->createChildSceneNode( "nodeTete " , Vector3::ZERO, Quaternion::IDENTITY);
+    
+    node->yaw(Radian(Math::PI));
+    node->yaw(Radian(Math::PI));
+
+    Vector3 position = Vector3(30.0, 50.0, 0.0);
+    node->setPosition(position);
+
+    node->setPosition(30.0, 50.0, 0.0); 
+    node->translate(-30.0, 50.0, 0.0); 
+    
+    
+    //attachement de l entite au noeud
+    node->attachObject ( head );
+}
+\end{lstlisting}
 
 
 
@@ -451,13 +409,13 @@ Donnez le code r\'ecapitulatif serait pas mal ici\footnote{Donnez le code récap
 
 \section{Cr\'eer un mesh}
 
-Nous pouvons rajouter un sol \`{a} notre sc\`ene, pour cela nous allons cr\'eer nous-m\^emes\footnote{il faut un ''s'' \'a  nous-m\^emes?} un nouveau mesh. \'Etant donn\'e que nous n'avons besoin que d'un plan pour le sol, le mesh peut tr\`es simplement \^etre cr\'eer dans le code de notre application.
+Nous pouvons rajouter un sol \`{a} notre sc\`ene, pour cela nous allons cr\'eer nous-m\^emes\footnote{il faut un ''s'' \`a  nous-m\^emes?} un nouveau mesh. \'Etant donn\'e que nous n'avons besoin que d'un plan pour le sol, le mesh peut tr\`es simplement \^etre cr\'eer dans le code de notre application.
 
 
 
 \subsection{Le mesh}
 
-Il existe une classe Plane\footnote{de meme que pour quaternion.entity marquer les nom de classe de manière élégante pour les discerner du texte serait bien} qui va nous permettre de g\'en\'erer... un plan qui repr\'esentera le sol.\footnote{En plus de la classe Plane, vous trouverez aussi des classes Box (pour les cubes) et Sphere qui fonctionnent sur le m\^eme principe.}\newline
+Il existe une classe Plane\footnote{de m\^eme que pour quaternion.entity marquer les noms de classe de manière \'el\'egante pour les discerner du texte serait bien} qui va nous permettre de g\'en\'erer... un plan qui repr\'esentera le sol.\footnote{En plus de la classe Plane, vous trouverez aussi des classes Box (pour les cubes) et Sphere qui fonctionnent sur le m\^eme principe.}\newline
 
 Pour cr\'eer un plan nous appelons Plane avec les param\`etres suivants:
 \begin{itemize}
@@ -552,6 +510,79 @@ Pour corriger cela, il va falloir remonter notre noeud li\'e \`{a} notre entit\'
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{Code}
+
+\subsubsection{PremiereApplication.cpp}
+\begin{lstlisting}[caption={PremiereApplication.cpp: Cr\'eation d'un sol}]
+#include "PremiereApplication.h"
+
+void PremiereApplication::createScene()
+{
+    //creation d une entite
+    Entity *head= mSceneMgr->createEntity("Tete", "ogrehead.mesh" );
+    
+    //creation d un noeud
+    SceneNode *node= mSceneMgr->getRootSceneNode( )->createChildSceneNode( "nodeTete " , Vector3::ZERO, Quaternion::IDENTITY);
+    
+    node->yaw(Radian(Math::PI));
+    node->yaw(Radian(Math::PI));
+
+    //setPosition place le noeud aux coord passees en parametres
+    Vector3 position = Vector3(30.0, 50.0, 0.0);
+    node->setPosition(position);
+
+    node->setPosition(30.0, 50.0, 0.0); 
+    /*equivalent a
+    Vector3 position = Vector3(30.0, 50.0, 0.0);
+    node->setPosition(position);
+    */
+
+    //deplace le noeud par rapport a sa position actuelle
+    node->translate(-30.0, 50.0, 0.0); //par defaut la trnslt se fait par rap a TS_WORLD
+   
+    //attachement de l entite au noeud
+    node->attachObject ( head );
+
+    //creation d un plan
+    Plane plan(Vector3::UNIT_Y, 0);
+
+    //creation d un mesh cad l objet 3d visible ds la scene
+    MeshManager::getSingleton().createPlane("sol",
+                ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+                plan, 500, 500, 1, 1, true, 1, 1, 1, Vector3::UNIT_Z); 
+
+    //entite qui representera le plan
+    Entity *ent= mSceneMgr->createEntity("EntiteSol", "sol");
+
+    //ajout du materiau a l entite
+    ent->setMaterialName("Examples/GrassFloor");//texture de pelouse
+    /*les differents materiaux sont sous /media/materials/scritps, par ex:
+    ent->setMaterialName("Examples/WaterStream");//texture d eau animee*/
+
+    //creation d un noeud
+    node = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+    node->attachObject(ent);
+}
+
+
+\end{lstlisting}
+
+A cause de la position de la cam\'era, il se peut alors que le sol ne soit pas visible.
 
 
 
@@ -780,6 +811,166 @@ Enfin, on peut aussi indiquer les distances near clip et far clip, qui sont les 
 	mCamera->setNearClipDistance(1);
 	mCamera->setFarClipDistance(1000);
 \end{lstlisting}
+
+
+
+
+\subsection{Code}
+
+\subsubsection{PremiereApplication.cpp}
+\begin{lstlisting}[caption={PremiereApplication.cpp: Cr\'eation de la cam\'era}]
+
+#include "PremiereApplication.h"
+
+void PremiereApplication::createScene()
+{
+    //creation d une entite
+    Entity *head= mSceneMgr->createEntity("Tete", "ogrehead.mesh" );
+    
+    //creation d un noeud
+    SceneNode *node= mSceneMgr->getRootSceneNode( )->createChildSceneNode( "nodeTete " , Vector3::ZERO, Quaternion::IDENTITY);
+    
+    node->yaw(Radian(Math::PI));
+    node->yaw(Radian(Math::PI));
+
+    //setPosition place le noeud aux coord passees en parametres
+    Vector3 position = Vector3(30.0, 50.0, 0.0);
+    node->setPosition(position);
+
+    node->setPosition(30.0, 50.0, 0.0); 
+    /*equivalent a
+    Vector3 position = Vector3(30.0, 50.0, 0.0);
+    node->setPosition(position);
+    */
+
+    //deplace le noeud par rapport a sa position actuelle
+    node->translate(-30.0, 50.0, 0.0); //par defaut la trnslt se fait par rap a TS_WORLD
+   
+    //attachement de l entite au noeud
+    node->attachObject ( head );
+
+    //creation d un plan
+    Plane plan(Vector3::UNIT_Y, 0);
+
+    //creation d un mesh cad l objet 3d visible ds la scene
+    MeshManager::getSingleton().createPlane("sol",
+                ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+                plan, 500, 500, 1, 1, true, 1, 1, 1, Vector3::UNIT_Z); 
+
+    //entite qui representera le plan
+    Entity *ent= mSceneMgr->createEntity("EntiteSol", "sol");
+
+    //ajout du materiau a l entite
+    ent->setMaterialName("Examples/GrassFloor");//texture de pelouse
+    /*les differents materiaux sont sous /media/materials/scritps, par ex:
+    ent->setMaterialName("Examples/WaterStream");//texture d eau animee*/
+
+    //creation d un noeud
+    node = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+    node->attachObject(ent);
+}
+
+/*definit la position de notre point de vue*/
+void PremiereApplication::createCamera()
+{
+    //creation de la camera
+    mCamera = mSceneMgr->createCamera("Ma Camera");
+
+    //position de la camera
+    mCamera->setPosition(Vector3(-100.0, 150.0, 200.0));
+
+    //permet de determiner le point de la scene que regarde notre camera
+    mCamera->lookAt(Vector3(0.0, 100.0, 0.0));
+
+    //definition des distances de near clip et de far clip, qui
+    //sont les distances minimale et maximale auxquelles doit se
+    //trouver un objet pour être affichr à l'écran.
+    mCamera->setNearClipDistance(1);
+    mCamera->setFarClipDistance(1000);
+}
+
+\end{lstlisting}
+
+
+
+\subsubsection{PremiereApplication.h}
+\begin{lstlisting}[caption={PremiereApplication.h: Cr\'eation de la cam\'era}]
+using namespace std;
+
+#include <ExampleApplication.h>
+
+class PremiereApplication : public ExampleApplication
+{
+public:
+    void createScene();
+    void createCamera();
+};
+
+\end{lstlisting}
+
+
+\subsubsection{main.cpp}
+\begin{lstlisting}[caption={main.cpp: Cr\'eation de la cam\'era}]
+#include <Ogre.h>
+
+#include "PremiereApplication.h"
+
+#if OGRE_PLATFORM == PLATFORM_WIN32 || OGRE_PLATFORM == OGRE_PLATFORM_WIN32
+#define WIN32_LEAN_AND_MEAN
+#include "windows.h"
+
+INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR strCmdLine, INT)
+#else
+int main(int argc, char **argv)
+#endif
+{
+
+    PremiereApplication app;
+    
+    try {
+      app.go();
+    } catch(Ogre::Exception& e) {
+#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
+        MessageBoxA(NULL, e.getFullDescription().c_str(), "An exception has occurred!", MB_OK | MB_ICONERROR | MB_TASKMODAL);
+#else
+        fprintf(stderr, "An exception has occurred: %s\n",
+            e.getFullDescription().c_str());
+#endif
+    }
+
+    return 0;
+}
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
