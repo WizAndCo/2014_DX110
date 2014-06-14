@@ -1,0 +1,216 @@
+\chapter{La lumi\`ere}
+
+
+
+\section{Les lumi\`eres}
+
+
+\subsection{Quelques fonctions de base}
+
+La lumi\`ere est n\'ecessaire pour pouvoir voir quelque chose dans une sc\`ene. Comment a-t-on donc pu voir nos objets depuis le d\'ebut de ce cours?
+
+Il existe une propri\'et\'e du sc\`ene Manager qui permet de d\'efinir une lumi\`ere ambiante. Cela permet d'\'eclairer la sc\`ene de fa\c{c}on homog\`ene avec une certaine luminosit\'e. Par d\'efaut, on a un \'eclairage \`{a} la lumi\`ere blanche qui permet de voir ce qui se passe dans la sc\`ene. La ligne suivante peut \^etre ajout\'ee au d\'ebut de la m\'ethode createsc\`ene() pour appliquer une lumi\`re ambiante noire nous pourrons ainsi d\'efinir des lumi\`res et voir leur influence.
+
+\begin{lstlisting}
+msceneMgr->setAmbientLight(ColourValue(0.0, 0.0, 0.0));
+\end{lstlisting}
+
+
+
+La classe ColourValue permet de d\'efinir une couleur en entrant les quantit\'es respectives de rouge, de vert puis de bleu dans un nombre compris entre 0 et 1. Il est aussi possible de d\'efinir une composante alpha (la transparence), utile pour des textures par exemple.
+
+Une lumi\`ere est un objet de sc\`ene, on passe donc par le sc\`ene manager pour cr\'eer une lumi\`ere:
+\begin{lstlisting}
+Light *light = msceneMgr->createLight(''lumiere1'');
+\end{lstlisting}
+
+Par d\'efaut, la lumi\`ere cr\'e\'ee est de type ponctuelle. Vous avez plus de d\'etails sur les diff\'erents types de lumi\`ere un peu plus bas.
+
+Mettons tout de suite en place quelques param\`etres de base: la couleur \'emise (diffuse et sp\'eculaire, que nous d\'etaillerons dans le chapitre sur les mat\'eriaux) et la position.
+\begin{lstlisting}
+light->setDiffuseColour(1.0, 0.7, 1.0);
+light->setSpecularColour(1.0, 0.7, 1.0);
+light->setPosition(-100, 200, 100);
+\end{lstlisting}
+
+
+
+
+Les deux premiers param\`etres sont les couleurs diffuses et sp\'eculaires, au format RVB, avec des valeurs qui doivent \^etre comprises entre 0 et 1.
+
+La couleur diffuse est la couleur sous laquelle vont appara\^itre les objets non brillants, et la couleur sp\'eculaire est un param\`etre suppl\'ementaire pour les mat\'eriaux r\'efl\'echissants comme le m\'etal ou le verre. Pour une lumi\`ere, on met g\'en\'eralement la m\^eme couleur pour ces deux param\`etres.
+
+Vient ensuite la m\'ethode setPosition(), qui ne devrait pas vous poser de probl\`emes, et enfin une derni\`ere ligne \footnote{quelle derni\`ere ligne ???} permettant d'amplifier ou de diminuer l'intensit\'e lumineuse. Par d\'efaut, ce coefficient est de 1, mais pour notre sc\`ene j'ai voulu l'augmenter pour qu'on y voie un peu plus clair: n'h\'esitez pas \`{a} jouer un peu avec pour faire des essais.
+
+Enfin, sachez qu'il est possible d'attacher une lumi\`ere \`{a} un noeud de sc\`ene. Dans ce cas, la m\'ethode Light::setPosition() d\'efinit la position relative de la lumi\`ere par rapport au noeud.
+\begin{lstlisting}
+	node->attachObject(light);
+\end{lstlisting}
+
+
+Vous pouvez donc facilement placer une lumi\`ere \`{a} la position d'un mesh cens\'e \'emettre de la lumi\`ere - par exemple les phares d'une voiture - et les d\'eplacer en m\^eme temps gr\^{a}ce \`{a} une seule commande vers le noeud de sc\`ene!
+
+
+
+
+
+\subsection{Les types de lumi\`eres}
+
+Ogre peut g\'erer diff\'erents types de lumi\`eres selon l'effet d\'esir\'e. Ils sont au nombre de 3:
+
+\begin{itemize}
+\item la lumi\`ere ponctuelle: cette lumi\`ere \'emet dans toutes les directions \`{a} partir de sa position;
+\item la lumi\`ere directionnelle: une lumi\`ere dont les rayons vont dans une direction unique et qui n'a pas de position. C'est le genre de lumi\`ere qui permet de reproduire l'\'eclairage du soleil par exemple;
+\item le projecteur ou spot: c'est une lumi\`ere qui \'emet un c\^one lumineux \`{a} partir de sa position, \`{a} la fa\c{c}on d'une lampe-torche.
+\end{itemize}
+    
+
+
+
+
+\subsection{Lumi\`ere ponctuelle}
+C'est le type de lumi\`ere cr\'e\'e par d\'efaut que l'on a vu plus haut. Pour le modifier manuellement, il faut utiliser le type LT\_POINT.
+
+\begin{lstlisting}
+	light->setType(Light::LT_POINT);
+\end{lstlisting}
+
+
+Avec ce type de lumi\`ere, il existe une m\'ethode nous permettant aussi de limiter la port\'ee de notre \'eclairage. Voici le prototype:
+\begin{lstlisting}
+Light::setAttenuation( Real range, Real constant, Real linear, Real quadratic )
+\end{lstlisting}
+
+
+
+C'est plus d\'elicat car les param\`etres doivent \^etre choisis avec soin. 
+\begin{itemize}
+\item Le premier est la distance caract\'eristique d'att\'enuation, c'est-\`{a}-dire la distance \`{a} partir de laquelle la luminosit\'e diminue. 
+\item constant est une constante d'att\'enuation comprise entre 0 et 1. Plus elle est proche de 0, et plus le passage de la lumi\`ere \`{a} l'ombre est brutal.
+\item linear et quadratic sont les param\`etres de la courbe d'att\'enuation, et doivent \^etre assez faibles, sinon la lumi\`ere s'att\'enue trop rapidement.
+\end{itemize}
+	
+
+
+Ca ne marche pas! L'ogre est bien \'eclair\'e mais le sol reste d\'esesp\'er\'ement noir!
+
+L'att\'enuation ajoute une caract\'eristique un peu diff\'erente pour la gestion de la lumi\`ere. En effet, l'\'eclairage des surfaces est calcul\'e en fonction des vertices situ\'es dans la zone d'\'eclairage. Lorsqu'un vertice est dans la zone d'\'eclairage du spot, la surface autour de lui est \'eclair\'ee, sinon elle est dans l'ombre. Ogre se charge ensuite de faire les d\'egrad\'es entre les vertices plus ou moins \'eclair\'es.
+
+Mais ici, notre plan n'est constitu\'e que de quatre vertices (les coins), dont aucun n'est \'eclair\'e par le spot. Le sol n'est donc pas \'eclair\'e.
+
+Pour r\'egler \c{c}a, il suffit de modifier notre sol pour qu'il poss\`ede plus de vertices. Retrouvez la d\'efinition du plan et modifiez les param\`etres de d\'ecoupage pour obtenir 10 segments en largeur et en longueur (les deux param\`etres avant le true).
+
+\begin{lstlisting}
+Plane plan(Vector3::UNIT_Y, 0);
+MeshManager::getSingleton().createPlane(''sol'', ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, plan, 500, 500, 10, 10, true, 1, 1, 1, Vector3::UNIT_Z);
+\end{lstlisting}
+
+
+
+Notez que plus il y aura de vertices sur le mod\`ele, plus ce sera pr\'ecis, mais ce sera un peu plus co\^uteux en ressources.
+
+
+
+
+\subsection{Lumi\`ere directionnelle}
+
+Etant donn\'e que cette lumi\`ere est de type ''soleil'' et qu'elle \'emet \`{a} l'infini, il n'est pas utile de renseigner sa position. En revanche, la m\'ethode setDirection() permet de d\'efinir le vecteur directeur des rayons lumineux.
+
+\begin{lstlisting}
+light->setType(Light::LT_DIRECTIONAL);
+light->setDirection(10.0, -20.0, -5);
+\end{lstlisting}
+
+
+
+
+
+
+\subsection{Projecteur}
+
+Le projecteur permet g\'en\'eralement de simuler un \'eclairage artificiel en proposant une lumi\`ere directionnelle d\'efinie dans un c\^one central et un c\^one ext\'erieur, avec deux intensit\'es diff\'erentes. Le c\^one central d\'efinit une lumi\`ere plus forte que le c\^one ext\'erieur, o\`{u} la lumi\`ere est quelque peu att\'enu\'ee. Ces deux c\^ones sont d\'efinis par leur angle d'ouverture, ainsi que par un falloff, c'est-\`{a}-dire un coefficient indiquant si la transition entre les deux c\^ones doit \^etre plus ou moins rapide:
+\begin{lstlisting}
+light->setType(Light::LT_SPOTLIGHT);
+light->setPosition(0, 150, -100);
+light->setDirection(0, -1, 1);
+light->setSpotlightRange(Degree(30), Degree(60), 1.0);
+\end{lstlisting}
+
+
+Notez que l'\'eclairage du spot ob\'eit aux m\^emes r\`egles que pour l'att\'enuation d'une lumi\`ere ponctuelle: il faut que les vertices soient \'eclair\'es pour que l'\'eclairage soit visible.
+
+
+De m\^eme que pour les lumi\`eres ponctuelles, vous pouvez ajouter une port\'ee limit\'ee \`{a} votre projecteur avec la m\'ethode setAttenuation().
+
+
+
+
+
+
+\section{Les ombres}
+
+
+\subsection{Activer les ombres}
+
+Tout d'abord, on doit param\'etrer nos lumi\`eres et nos entit\'es pour projeter (ou non) des ombres.
+Que ce soit pour les lumi\`eres ou les entit\'es, on utilise la m\^eme m\'ethode pour choisir d'activer ou non la projection:
+
+\begin{lstlisting}
+light->setCastShadows(true);
+head->setCastShadows(true);
+\end{lstlisting}
+
+
+Si vous voulez qu'une entit\'e ne projette aucune ombre, il suffit de mettre le param\`etre \`{a} false. De m\^eme si vous voulez qu'une lumi\`ere ne projette aucune ombre pour les entit\'es (pour une lumi\`ere d'ambiance ou d'ajustement, par exemple).
+
+N'oubliez pas de d\'esactiver la projection d'ombres pour le sol. D'une part parce que celui-ci n'a pas besoin de projeter d'ombres, d'autre part parce que certaines techniques n\'ecessitent d'avoir ce param\`etre d\'esactiv\'e pour avoir une ombre sur le mesh.
+
+Avant de pouvoir afficher les ombres, il faut les activer. Cela se fait dans le sc\`ene Manager, par exemple:
+
+\begin{lstlisting}
+msceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
+\end{lstlisting}
+
+
+
+On d\'efinit ici la technique de rendu qui sera utilis\'ee pour les ombres dans la sc\`ene (voir ci-dessous).
+
+
+
+
+\subsection{Les diff\'erents types d'ombres}
+
+Ogre permet de g\'en\'erer diff\'erents types d'ombres selon les besoins, qui d\'ependent g\'en\'eralement des mod\`eles concern\'es par la projection d'ombres.
+
+Il existe deux techniques pour la g\'en\'eration d'ombres:
+\begin{itemize}
+\item le type ''Stencil'' (pochoir en anglais)
+\item le type ''Texture''
+\end{itemize}
+
+Les ombres de type Stencil sont tr\`es pr\'ecises dans les contours et permettent une tr\`es bonne projection d'ombre lorsque l'on y regarde de pr\`es. En revanche, elles sont assez co\^uteuses en ressources, notamment lorsque les mesh sont anim\'es. Enfin, elles ne prennent pas du tout en compte la transparence des textures, un cube de texture transparente projettera donc une ombre si ce param\`etre est activ\'e.
+Les ombres de type Texture permettent de g\'erer la transparence des textures et sont moins co\^uteuses en ressources, mais leur pr\'ecision est plus faible.
+
+Enfin, chacune de ces deux cat\'egories est compos\'ee de deux techniques, l'une dite modulative, l'autre additive. On obtient ainsi quatre techniques possibles:
+\begin{itemize}
+\item SHADOWTYPE\_TEXTURE\_MODULATIVE
+\item SHADOWTYPE\_TEXTURE\_ADDITIVE
+\item SHADOWTYPE\_STENCIL\_MODULATIVE
+\item SHADOWTYPE\_STENCIL\_ADDITIVE
+\end{itemize}
+
+
+Notez que dans chacun des cas, la technique additive est la meilleure, notamment pour une approche de type Stencil. La diff\'erence pour les techniques de type Texture est minime; en revanche, la technique Stencil additive permet d'obtenir des ombres plus ou moins sombres en fonction de l'\'eclairage gr\^{a}ce \`{a} des passes successives, tandis que la m\'ethode Stencil modulative ne fait que projeter le mod\`ele au sol une seule fois pour chaque lumi\`ere.
+
+C'est donc dans le sc\`ene Manager que l'on s'occupe de d\'eterminer la technique de rendu des ombres. Par d\'efaut, celles-ci ne sont pas rendues.
+\begin{lstlisting}
+msceneMgr->setShadowTechnique(Ogre::SHADOWTYPE\_STENCIL\_MODULATIVE);
+\end{lstlisting}
+
+
+Il n'est possible d'avoir qu'une seule technique enregistr\'ee \`{a} la fois dans un sc\`ene Manager. Il n'est pas possible de choisir les types d'ombres \`{a} g\'en\'erer pour chaque lumi\`ere de la sc\`ene. Il faut donc faire un choix pour l'ensemble de vos ombres.
+
+Ci-dessous, l'approche bas\'ee sur la texture, peu pr\'ecise mais peu co\^uteuse en ressources:
+
+Image utilisateur \url{http://fr.openclassrooms.com/informatique/cours/decouvrez-ogre-3d/les-ombres-1}
+

@@ -1,0 +1,104 @@
+\documentclass[10pt,a4paper]{report}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{hyperref} %pr inserer des liens internet
+
+\usepackage{verbatim}%pour linsertion brute de commande LaTeX dans le texte
+\usepackage{moreverb}
+
+\usepackage{graphicx} %pour linsertion dimages
+
+%Lignes ajout\'ees pour les documents en fran\c{c}ais, pour que soit prises en compte les particularit\'es de la typographie fran\c{c}aise; c'est aussi grâce \`{a} ce package que la date est affich\'ee automatiquement en fran\c{c}ais, que le titre de la table des mati\`eres est « Table des mati\`eres » et non « Contents », etc. Les deux lignes suivantes permettent d'avoir des caract\`eres correctement accentu\'es en toutes circonstances.
+\usepackage[french]{babel}
+\usepackage[latin1]{inputenc}
+
+
+\usepackage{listings} %pr inserer du code
+\usepackage{xcolor}
+% pour une jolie insertion de code (https://www.sharelatex.com/project/51b8f1c34c2bd70430a90c23)
+\lstset{
+    backgroundcolor=\color{black!5}, % set backgroundcolor
+    basicstyle=\footnotesize,% basic font setting
+    language=C++,
+    %basicstyle=\ttfamily\small,
+    breaklines=true,
+    prebreak=\raisebox{0ex}[0ex][0ex]{\ensuremath{\hookleftarrow}},
+    frame=lines,
+    showtabs=false,
+    showspaces=false,
+    showstringspaces=false,
+    keywordstyle=\color{red}\bfseries,
+    stringstyle=\color{green!50!black},
+    commentstyle=\color{gray}\itshape,
+    numbers=left,
+    captionpos=t,
+    escapeinside={\%*}{*)}
+}
+
+
+
+%Pour faire un index
+\usepackage{makeidx}
+%Pour faire un index 
+\makeindex
+
+\title{OGRE}
+\author{O}
+
+
+\begin{document}
+
+
+
+\part*{Avant-Propos}
+\section*{Pr\'esentation du document}
+This document is a re-lecture of the tutorial \href{http://fr.openclassrooms.com/informatique/cours/decouvrez-ogre-3d}{''D\'ecouvrez Ogre 3D''}. The original tutorial was written by Julien Chichignoud on \href{fr.openclassrooms.com}{Openclassroom} (aka ''Le site des z\'eros'').\newline
+
+Writing this document is an attempt to make something like an active reading, and thus have a more attentive lecture and deepest understanding of Ogre's concepts. We modified a lot (sentences, structure, ...) but the essence is the same as the original tutorial.\newline
+
+We wish to highligh the fact that this document is a personal interpretation, and a in progress work.\newline
+
+The original tutorial is in French and as we are spending most of our strength in the comprehension of Ogre we did not take time to translate the original tutorial in French.\newline
+
+
+\section*{Licence}
+The original tutorial is released under the 
+\href{http://creativecommons.org/licenses/by-nc-sa/2.0/}{Creative Common licence} and so is also released this document.\newline
+
+The rest of the document will be now in French, sorry for those who cannot take advantage of the document.
+
+
+\part{Bases de Ogre}
+
+%---------------------------------------------------------------------------------------------------------------
+\include{Installation/installation}
+
+%---------------------------------------------------------------------------------------------------------------
+\include{Base_de_Ogre/Inserer_des_objets/inserer_des_objets}
+
+%---------------------------------------------------------------------------------------------------------------
+\include{Base_de_Ogre/Se_reperer_ds_l_espace/se_reperer_dans_l_espace}
+
+%---------------------------------------------------------------------------------------------------------------
+\include{Base_de_Ogre/La_lumiere/la_lumiere}
+
+%---------------------------------------------------------------------------------------------------------------
+\include{Base_de_Ogre/La_gestion_des_entrees/la_gestion_des_entrees}
+
+%---------------------------------------------------------------------------------------------------------------
+\include{Base_de_Ogre/Garder_les_pieds_sur_terre/garder_les_pieds_sur_terre}
+
+
+%---------------------------------------------------------------------------------------------------------------
+
+
+\appendix
+\include{Annexe_latex/annexe_latex}
+
+%l index sera ecrit ici
+\printindex
+
+\end{document}
+
