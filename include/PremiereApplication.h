@@ -6,7 +6,8 @@ using namespace std;
 
 class PremiereApplication : public ExampleApplication
 {
-public:
-    void createScene();
-    void createCamera();
+    public:
+        void createScene();
+        void createCamera();
+        void createViewports();
 };

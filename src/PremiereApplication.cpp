@@ -67,4 +67,27 @@ void PremiereApplication::createCamera()
     mCamera->setFarClipDistance(1000);
 }
 
+void PremiereApplication::createViewports()
+{
+    //la creation du Viewport, appelee par la fenetre et prenant en parametre la
+    //camera concernee, le premier parametre est la camera de laqll le contenu
+    //du viewport sera rendu, ce paramatre est le seul obligatoire
+    Viewport *vue = mWindow->addViewport(mCamera);
+    //Viewport *vue = mWindow->addViewport(mCamera, 0, 0, 0, 0.8, 0.8);
+
+    //Grace a ce Viewport nouvellement cree, nous allons faire coincider
+    //le rapport largeur / hauteur de notre camera avec celui du
+    //Viewport, pour avoir une image non deformee
+    mCamera->setAspectRatio(Real(vue->getActualWidth()) /  Real(vue->getActualHeight()));
+
+    //on definit ici la couleur de fond
+    //vue->setBackgroundColour(ColourValue(0.0, 0.0, 1.0));     //bleu
+    vue->setBackgroundColour(ColourValue(0.980, 0.502, 0.447)); //saumon
+
+   // creation d'un viewport dans le coin bas gauche
+   //les parametres autres que le premier sont obligatoires pour la definition
+   //de plusieurs viewport
+   Viewport* vue2 = mWindow->addViewport(mCamera, 1, 0, 0.8, 0.2, 0.2);
+   vue2->setBackgroundColour(ColourValue(0.561, 0.737, 0.561 ));  //darkseagreen
+}
 
