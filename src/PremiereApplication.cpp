@@ -25,7 +25,7 @@ void PremiereApplication::createScene()
     node->translate(-30.0, 50.0, 0.0); //par defaut la trnslt se fait par rap a TS_WORLD
    
     //attachement de l entite au noeud
-    node->attachObject ( head );
+    node->attachObject(head);
 
     //creation d un plan
     Plane plan(Vector3::UNIT_Y, 0);
@@ -33,7 +33,7 @@ void PremiereApplication::createScene()
     //creation d un mesh cad l objet 3d visible ds la scene
     MeshManager::getSingleton().createPlane("sol",
                 ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-                plan, 500, 500, 1, 1, true, 1, 1, 1, Vector3::UNIT_Z); 
+                plan, 500, 500, 10, 10, true, 1, 1, 1, Vector3::UNIT_Z); 
 
     //entite qui representera le plan
     Entity *ent= mSceneMgr->createEntity("EntiteSol", "sol");
@@ -46,6 +46,66 @@ void PremiereApplication::createScene()
     //creation d un noeud
     node = mSceneMgr->getRootSceneNode()->createChildSceneNode();
     node->attachObject(ent);
+
+    createLux("ponctuelle", head);//lumiere ponctuelle
+    //createLux("directionnelle", head);//lumiere directionnelle
+    //createLux("spot", head);//lumiere projecteur
+
+}
+
+/*
+cree une lumiere selon le parametre passe:
+    createLux("ponctuelle"); -> lumiere ponctuelle
+    createLux("directionnelle"); -> lumiere directionnelle
+    createLux("spot"); -> lumiere projecteur
+
+une lumiere noire est cree au debut de la methode
+
+une ombre est cree en fin de methode
+*/
+void PremiereApplication::createLux(std::string prmLightType, MovableObject * prmEnt)
+{
+    //application d une couleur noire
+    mSceneMgr->setAmbientLight(ColourValue(0.0, 0.0, 0.0)); 
+
+    //definition d une lumiere 
+    Light *light= mSceneMgr->createLight("lumiere1");
+
+    if (prmLightType == "ponctuelle")
+    {
+        //definition du type de lumiere
+        light->setType(Light::LT_POINT);//lumiere ponctuelle
+
+        //definition de la position de la lumiere
+        light->setPosition(-100, 200, 100);
+    }
+    else if (prmLightType == "directionnelle")
+    {
+        light->setType(Light::LT_DIRECTIONAL);//lumiere directionnelle
+        light->setDirection(10.0, -20.0, -5);//vecteur directeur de la lumiere directionnelle
+
+        //definition de la position de la lumiere
+        light->setPosition(-100, 200, 100);
+    }
+    else
+    {
+        light->setType(Light::LT_SPOTLIGHT);//lumiere directionnelle
+        light->setDirection(0.0, -1, 1);//vecteur directeur de la lumiere directionnelle
+        light->setSpotlightRange(Degree(30), Degree(60), 1.0);
+    }
+
+    //definition des couleur des lumieres diffuse
+    light->setDiffuseColour(1.0, 0.7, 0.1);
+    //et speculaire
+    light->setSpecularColour(1.0, 0.7, 0.1);
+
+    //ombre
+    //activation de la projection des ombres
+    light->setCastShadows(true);
+    prmEnt->setCastShadows(true);
+
+    //activation des ombres
+    mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
 }
 
 /*definit la position de notre point de vue*/
