@@ -21,6 +21,7 @@ find_package(OIS REQUIRED)
 
 # On dfinit les sources qu'on veut compiler
 SET( SOURCES
+  src/InputListener.cpp  
   src/PremiereApplication.cpp
   src/main.cpp
 )

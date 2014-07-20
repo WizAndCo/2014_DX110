@@ -1,12 +1,23 @@
 #include "PremiereApplication.h"
 
+
+
+void PremiereApplication::createFrameListener()
+{
+    mFrameListener = new InputListener(mWindow, mCamera, mSceneMgr, false, false, false);
+    
+    //root est l'élément de base de l'application Ogre qui s'occupe notamment de gérer les frames listeners
+    mRoot -> addFrameListener(mFrameListener);
+}
+
+
 void PremiereApplication::createScene()
 {
     //creation d une entite
     Entity *head= mSceneMgr->createEntity("Tete", "ogrehead.mesh" );
     
     //creation d un noeud
-    SceneNode *node= mSceneMgr->getRootSceneNode( )->createChildSceneNode( "nodeTete " , Vector3::ZERO, Quaternion::IDENTITY);
+    SceneNode *node= mSceneMgr->getRootSceneNode()->createChildSceneNode("nodeTete" , Vector3::ZERO, Quaternion::IDENTITY);
     
     node->yaw(Radian(Math::PI));
     node->yaw(Radian(Math::PI));
@@ -141,8 +152,8 @@ void PremiereApplication::createViewports()
     mCamera->setAspectRatio(Real(vue->getActualWidth()) /  Real(vue->getActualHeight()));
 
     //on definit ici la couleur de fond
-    //vue->setBackgroundColour(ColourValue(0.0, 0.0, 1.0));     //bleu
-    vue->setBackgroundColour(ColourValue(0.980, 0.502, 0.447)); //saumon
+    vue->setBackgroundColour(ColourValue(0.0, 0.0, 1.0));     //bleu
+    //vue->setBackgroundColour(ColourValue(0.980, 0.502, 0.447)); //saumon
 
    // creation d'un viewport dans le coin bas gauche
    //les parametres autres que le premier sont obligatoires pour la definition

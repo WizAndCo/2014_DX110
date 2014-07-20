@@ -3,6 +3,8 @@ using namespace std;
 #include <ExampleApplication.h>
 #include <OgreMovableObject.h>
 
+#include "InputListener.h"
+
 
 
 class PremiereApplication : public ExampleApplication
@@ -12,5 +14,9 @@ class PremiereApplication : public ExampleApplication
         void createCamera();
         void createViewports();
 
+        void createFrameListener();
+        
         void createLux(std::string, MovableObject *);
+        
+        //InputListener *mFrameListener;
 };
