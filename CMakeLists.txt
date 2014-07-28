@@ -19,7 +19,7 @@ include_directories (${OGRE_INCLUDE_DIRS})
 # L'exemple dpend aussi de OIS, une lib pour grer la souris, clavier, joystick...
 find_package(OIS REQUIRED)
 
-# On dfinit les sources qu'on veut compiler
+# On dfinit les sources qu'on veut compiler
 SET( SOURCES
   src/InputListener.cpp  
   src/PremiereApplication.cpp

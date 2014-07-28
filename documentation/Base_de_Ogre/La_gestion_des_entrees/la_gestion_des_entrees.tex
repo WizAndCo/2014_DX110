@@ -753,6 +753,75 @@ void PremiereApplication::createViewports()
 
 
 
+
+
+Puisque nous avons ajout\'e un fichier source il est n\'ecessaire de modifier le fichier CMakeLists.txt tel que suit:
+
+\begin{lstlisting}[caption={CMakeLists.txt}]
+project(helloworld)
+cmake_minimum_required(VERSION 2.6)
+
+set(CMAKE_MODULE_PATH "/usr/share/OGRE/cmake/modules")
+
+
+# Il faut indiquer a cmake ou se trouvent les includes en question
+#include_directories ("/home/adkoba/Workspace/ogre_src_v1-8-1/Samples/Common/include")
+include_directories ("include")
+
+# Bien sur, pour compiler Ogre, il faut le chercher, et definir le repertoire contenant les includes.
+find_package(OGRE REQUIRED)
+include_directories (${OGRE_INCLUDE_DIRS})
+
+# L'exemple depend aussi de OIS, une lib pour gerer la souris, clavier, joystick...
+find_package(OIS REQUIRED)
+
+# On definit les sources qu'on veut compiler
+SET( SOURCES
+  src/InputListener.cpp  
+  src/PremiereApplication.cpp
+  src/main.cpp
+)
+
+# On les compile
+add_executable (
+  premiereapp ${SOURCES}
+)
+
+# Et pour finir, on lie l'excutable avec les librairies que find_package nous a gentillement trouve.
+target_link_libraries(premiereapp ${OGRE_LIBRARY} ${OIS_LIBRARY} -lboost_system)
+
+set( RESOURCES_FILE
+  media/
+  plugins/
+  resources/ogre.cfg
+  resources/plugins.cfg
+  resources/resources.cfg
+)
+
+# do the copying
+foreach( file_i ${RESOURCES_FILE})
+    add_custom_command(
+      TARGET premiereapp
+      POST_BUILD
+      COMMAND cp -R ${CMAKE_SOURCE_DIR}/${file_i} ${CMAKE_BINARY_DIR}
+      COMMENT "copy file ${file_i}"
+      )
+endforeach( file_i )
+\end{lstlisting}
+
+Comme nous pouvons le voir nous avons juste modifi\'e la liste des sources du projet
+
+
+
+
+
+
+
+
+
+
+
+
 \section{Avec buffer, c'est plus simple ?}
 
 La m\'ethode pr\'esent\'ee ci-avant pour contr\^oler si une touche vient ou non d'\^etre appuy\'ee fonctionne mais est peu pratique si on doit surveiller quinze touches.
@@ -776,11 +845,11 @@ void PremiereApplication::createFrameListener()
 
 C'est quasiment tout , il va simplement falloir rajouter deux petites lignes dans le constructeur pour que tout soit pr\^et.
 
-Afin d'utiliser le buffer, il faut fournir un objet (un « \'ecouteur » d\'erivant d'une des classes OIS::***Listener selon le p\'eriph\'erique \`a \'ecouter) qui sera celui qui recevra les \'ev\'enements du type ''cette touche vient d'\^etre appuy\'ee, que dois-je faire ?''. Pour cela, OIS fournit une m\'ethode pour chacun de trois p\'eriph\'eriques d'entr\'ee (clavier, souris, joystick) :
+Afin d'utiliser le buffer, il faut fournir un objet (un ''\'ecouteur'' d\'erivant d'une des classes OIS::***Listener selon le p\'eriph\'erique \`a \'ecouter) qui sera celui qui recevra les \'ev\'enements du type ''cette touche vient d'\^etre appuy\'ee, que dois-je faire ?''. Pour cela, OIS fournit une m\'ethode pour chacun de trois p\'eriph\'eriques d'entr\'ee (clavier, souris, joystick) :
 
 
 \begin{itemize}
-\item  virtual void OIS::Mouse::setEventCallback(OIS::MouseListener* mouseListener);
+\item virtual void OIS::Mouse::setEventCallback(OIS::MouseListener* mouseListener);
 \item  virtual void OIS::Keyboard::setEventCallback(OIS::KeyListener* keyListener);
 \item  virtual void OIS::JoyStick::setEventCallback(OIS::JoyStickListener* joystickListener);
 \end{itemize}
@@ -828,7 +897,7 @@ InputListener(RenderWindow* win, Camera* cam, SceneManager *sceneMgr, bool buffe
 
 L'attribut mContinuer permettra d'enregistrer l'appui sur la touche Echap, mMouvement sera le vecteur de la direction dans laquelle on doit se d\'eplacer et mVitesseRotation un facteur multiplicatif permettant d'ajuster la vitesse de rotation de la cam\'era.
 
-On met donc \`a jour la valeur de retour de la m\'ethode frameRenderingQueued().
+On met \`a jour la valeur de retour de la m\'ethode frameRenderingQueued().
 
 \begin{lstlisting}[caption={}]
 bool InputListener::frameRenderingQueued(const Ogre::FrameEvent& evt)
@@ -994,3 +1063,218 @@ Dans ce chapitre, nous avons vu comment g\'erer nous-m\^emes les entr\'ees de l'
 
 Le prochain chapitre promet d'\^etre int\'eressant : nous allons en effet utiliser le module de terrain d'Ogre qui a \'et\'e refait dans la version 1.7 et qui offre une gestion beaucoup plus optimis\'ee des terrains par rapport aux versions pr\'ec\'edentes. Je n'en dis pas plus, on se retrouve de l'autre c\^ot\'e.
 
+
+\subsection{Code}
+
+Le CMakeLists.txt n'est pas modifi\'e par rapport \`a la gestion des entr\'ees sans buffer.
+
+
+\begin{lstlisting}[caption={PremiereApplication::createFrameListener()}]
+void PremiereApplication::createFrameListener()
+{
+    //activation du buffer pour la souris et le clavier
+    mFrameListener = new InputListener(mWindow, mCamera, mSceneMgr, true, true, true);
+    
+    //root est l'élément de base de l'application Ogre qui s'occupe notamment de gérer les frames listeners
+    mRoot -> addFrameListener(mFrameListener);
+}
+
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\begin{lstlisting}[caption={InputListener.h}]
+#include "ExampleFrameListener.h"
+
+//nous utiliserons OIS pour gérer les entrées de l'utilisateur
+#include <OIS/OIS.h>
+
+//la classe ExampleFrameListener ExampleApplication met déjà en oeuvre une gestion des entrées eet attend un ExampleFrameListener
+//ExampleFrameListener s'occupe aussi de construire les objets nécessaires à l'écoute des entrées
+class InputListener : public ExampleFrameListener, OIS::KeyListener, OIS::MouseListener
+{
+    public:
+        InputListener(RenderWindow* win, Camera* cam, SceneManager *sceneMgr, 
+                        bool bufferedKeys = false, bool bufferedMouse = false, 
+                        bool bufferedJoy = false);
+        
+        //nous allons juste devoir redefinir frameRenderingQueued() pour implementer notre propre gestion des entrees a la place de celle prevue par ExampleFrameListener.
+        virtual bool frameRenderingQueued(const FrameEvent& evt);
+        
+        //les 5 methodes suivantes sont des methodes virtuelles pures a reimplementer
+        //ces methodes seront appelees lors de levenmnt correspondant, leur valeur de retour ne dit pas si on doit continuer ou pas, d'ou l'interet de mContinuer
+        bool mouseMoved(const OIS::MouseEvent &e);      //evenmnt: la souris a bouge
+        bool mousePressed(const OIS::MouseEvent &e, OIS::MouseButtonID id);//evenmnt: un bouton de la souris a ete presse
+        bool mouseReleased(const OIS::MouseEvent &e, OIS::MouseButtonID id);//evenmnt: un bouton de la souris a ete relache 
+        bool keyPressed(const OIS::KeyEvent &e);//evenmnt: un bouton a ete presse 
+        bool keyReleased(const OIS::KeyEvent &e);//evenmnt: un bouton a ete relache 
+        
+
+        private:
+            Ogre::SceneManager *mSceneMgr;
+            Ogre::Camera *mCamera;
+            
+            //permettra d'enregistrer l'appuie sur ECHAP
+            bool mContinuer;
+
+            //vecteur de la direction ds lqll on doit bouger
+            Ogre::Vector3 mMouvement;
+            Ogre::Real mVitesse;
+            
+            //pour ajuster la vitesse de rotation de la souris
+            Ogre::Real mVitesseRotation;
+
+            Ogre::Radian mRotationX;
+            Ogre::Radian mRotationY;
+};
+
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+
+
+
+\begin{lstlisting}[caption={InputListener.cpp}]
+
+
+
+#include <OIS/OIS.h>
+#include "InputListener.h"
+
+
+
+InputListener::InputListener(RenderWindow* win, Camera* cam, SceneManager *sceneMgr,
+                                bool bufferedKeys, bool bufferedMouse, bool bufferedJoy) 
+    : ExampleFrameListener(win, cam, bufferedKeys, bufferedMouse, bufferedJoy)
+    {
+        mCamera = cam;
+        mSceneMgr = sceneMgr;
+        
+        mContinuer = true;//permettra l enregistrmnt de l appuie sur ECHAP
+        mMouvement = Ogre::Vector3::ZERO;//sera le vct de la direection ds laqll on doit se deplacer
+        
+        mVitesse = 100;
+        mVitesseRotation = 0.3;//fcteur multiplicatif pour ajuster la rotation de la camera
+       
+        //enregistrement d un ecouteur pour la souris et pour le clavier
+        mMouse->setEventCallback(this);
+        mKeyboard->setEventCallback(this);
+    }
+
+
+
+bool InputListener::frameRenderingQueued(const FrameEvent& evt)
+{
+    //ces lignes permettent la mise à jour de nos objets pour obtenir le nom des touches enfoncées
+   if(mMouse){
+       mMouse->capture();
+   }
+   if(mKeyboard){
+       mKeyboard->capture();
+   }
+   
+   //gestion du mouvement de la camera
+   Ogre::Vector3 deplacement = Ogre::Vector3::ZERO;
+   deplacement = mMouvement * mVitesse * evt.timeSinceLastFrame;
+   mCamera->moveRelative(deplacement);
+    
+   return mContinuer;
+}
+
+
+
+//les 5 methodes suivantes sont des methodes virtuelles pures a reimplementer
+//si la souris a bouge
+bool InputListener::mouseMoved(const OIS::MouseEvent &e)
+{    
+    mCamera->yaw(Ogre::Degree(-mVitesseRotation * e.state.X.rel));
+    mCamera->pitch(Ogre::Degree(-mVitesseRotation * e.state.Y.rel));
+    
+    return true;
+}
+
+//si une touche de la souris est pressee
+bool InputListener::mousePressed(const OIS::MouseEvent &e, OIS::MouseButtonID id)
+{
+    return true;
+}
+
+//si une touche de la souris est relachee 
+bool InputListener::mouseReleased(const OIS::MouseEvent &e, OIS::MouseButtonID id)
+{
+    return true;
+}
+
+//si une touche est pressee
+bool InputListener::keyPressed(const OIS::KeyEvent &e)
+{
+    switch(e.key)
+    {
+        case OIS::KC_ESCAPE:
+            mContinuer = false;
+            break;
+        case OIS::KC_W:
+            mMouvement.z -= 1;
+            break;
+        case OIS::KC_S:
+            mMouvement.z += 1;
+            break;
+        case OIS::KC_A:
+            mMouvement.x -= 1;
+            break;
+        case OIS::KC_D:
+            mMouvement.x += 1;
+            break;
+        case OIS::KC_LSHIFT:
+            mVitesse *= 2;
+            break;
+    }
+    
+    return true;
+}
+
+//si une touche est relachee
+bool InputListener::keyReleased(const OIS::KeyEvent &e)
+{
+    
+    switch(e.key)
+    {
+        case OIS::KC_W:
+            mMouvement.z += 1;
+            break;
+        case OIS::KC_S:
+            mMouvement.z -= 1;
+            break;
+        case OIS::KC_A:
+            mMouvement.x += 1;
+            break;
+        case OIS::KC_D:
+            mMouvement.x -= 1;
+            break;
+        case OIS::KC_LSHIFT:
+            mVitesse /= 2;
+            break;
+    } 
+    
+    return true;
+}
+\end{lstlisting}

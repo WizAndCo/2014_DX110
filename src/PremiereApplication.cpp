@@ -4,7 +4,8 @@
 
 void PremiereApplication::createFrameListener()
 {
-    mFrameListener = new InputListener(mWindow, mCamera, mSceneMgr, false, false, false);
+    //activation du buffer pour la souris et le clavier
+    mFrameListener = new InputListener(mWindow, mCamera, mSceneMgr, true, true, true);
     
     //root est l'élément de base de l'application Ogre qui s'occupe notamment de gérer les frames listeners
     mRoot -> addFrameListener(mFrameListener);
