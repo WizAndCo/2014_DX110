@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 2.6)
 # ~ set(CMAKE_MODULE_PATH "/usr/lib/OGRE/cmake/")
 set(CMAKE_MODULE_PATH "/usr/share/OGRE/cmake/modules")
 
-#set(CMAKE_CXX_FLAGS "-Wall -W -Werror -ansi -pedantic -g")
+set(CMAKE_CXX_FLAGS "-Wall -std=c++11 -g")
 
 # Il s'agit du tutoriel d'exemple, qui utilise quelques fichiers prdfini de Ogre. Il faut indiquer  cmake o se trouvent les includes en question
 # ~ include_directories ("/usr/share/OGRE/Samples/Common/include/")
