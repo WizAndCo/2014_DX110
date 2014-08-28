@@ -1,0 +1,82 @@
+\documentclass[10pt,a4paper]{report}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{hyperref} %pr inserer des liens internet
+
+\usepackage{verbatim}%pour linsertion brute de commande LaTeX dans le texte
+\usepackage{moreverb}
+
+\usepackage{graphicx} %pour linsertion dimages
+
+%Lignes ajout\'ees pour les documents en fran\c{c}ais, pour que soit prises en compte les particularit\'es de la typographie fran\c{c}aise; c'est aussi grÃ¢ce \`{a} ce package que la date est affich\'ee automatiquement en fran\c{c}ais, que le titre de la table des mati\`eres est Â« Table des mati\`eres Â» et non Â« Contents Â», etc. Les deux lignes suivantes permettent d'avoir des caract\`eres correctement accentu\'es en toutes circonstances.
+\usepackage[french]{babel}
+\usepackage[latin1]{inputenc}
+
+
+\usepackage{listings} %pr inserer du code
+\usepackage{xcolor}
+% pour une jolie insertion de code (https://www.sharelatex.com/project/51b8f1c34c2bd70430a90c23)
+\lstset{
+    backgroundcolor=\color{black!5}, % set backgroundcolor
+    basicstyle=\footnotesize,% basic font setting
+    language=C++,
+    %basicstyle=\ttfamily\small,
+    breaklines=true,
+    prebreak=\raisebox{0ex}[0ex][0ex]{\ensuremath{\hookleftarrow}},
+    frame=lines,
+    showtabs=false,
+    showspaces=false,
+    showstringspaces=false,
+    keywordstyle=\color{red}\bfseries,
+    stringstyle=\color{green!50!black},
+    commentstyle=\color{gray}\itshape,
+    numbers=left,
+    captionpos=t,
+    escapeinside={\%*}{*)}
+}
+
+%Pour faire un index
+\usepackage{makeidx}
+
+%Pour faire un index 
+\makeindex
+
+\title{GIT HELP}
+\author{AdKoba}
+
+
+\begin{document}
+
+\section{Les branches}
+
+Les branches sont très utiles pour travailler sur des stories différente. L'idée est de créer une branche par story et d'y effectuer tout le travail relatif à celle-ci sans impacter directement la branche master. 
+
+Pour créer une branche il faut procéder comme suit:
+$git branch ``branch name''
+$git checkout ``branch name''
+
+ou directement:
+$git checkout -b ``branch name''
+Switched to a new branch ``branch name''
+
+A partir de cet instant notre HEAD pointe sur cette nouvelle branche. Tout les modifications qui y seront réalisées le seront uniquement dans celle-ci
+
+On peut ainsi créer plusieurs branches en parallèle pour travailler sur des différents sujets.
+
+Quand le travail sur une branche est terminé, il faut commiter les modifications puis merger la branche avec la branche master pour pouvoir les publier.
+
+On commite
+$ git commit -a -m 'commit message'
+On rebascule sur la branche master
+$ git checkout master
+Et on merge
+$ get merge ma-branche
+Il ne reste plus qu'à publier les modifications
+$ git pull
+
+%l index sera ecrit ici
+\printindex
+
+\end{document}
