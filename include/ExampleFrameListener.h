@@ -56,6 +56,10 @@ using namespace Ogre;
 #include "OgreRTShaderSystem.h"
 #endif
 
+#include <Overlay/OgreOverlay.h>
+#include <Overlay/OgreOverlayManager.h>
+#include <Overlay/OgreOverlayElement.h>
+
 class ExampleFrameListener: public FrameListener, public WindowEventListener
 {
 protected:

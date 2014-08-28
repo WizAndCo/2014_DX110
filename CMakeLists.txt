@@ -16,6 +16,15 @@ include_directories ("include")
 find_package(OGRE REQUIRED)
 include_directories (${OGRE_INCLUDE_DIRS})
 
+if (OGRE_Overlay_FOUND)
+# pretty sure the following include is unneeded
+# append OgreOverlay to the end of the OGRE_LIBRARIES variable
+  set(OGRE_LIBRARIES ${OGRE_LIBRARIES} ${OGRE_Overlay_LIBRARIES})
+  message(STATUS "Found OGRE_Terrain: ${OGRE_Overlay_LIBRARIES}")
+else (OGRE_Overlay_FOUND)
+  message(SEND_ERROR "OgreOverlay Library not found.")
+endif(OGRE_Overlay_FOUND)
+
 # L'exemple dpend aussi de OIS, une lib pour grer la souris, clavier, joystick...
 find_package(OIS REQUIRED)
 
@@ -31,12 +40,13 @@ add_executable (
   premiereapp ${SOURCES}
 )
 
+message(STATUS "OGRE Libraries used to link are ${OGRE_LIBRARIES}")
+
 # Et pour finir, on lie l'excutable avec les librairies que find_package nous a gentillement trouv.
-target_link_libraries(premiereapp ${OGRE_LIBRARY} ${OIS_LIBRARY} -lboost_system)
+target_link_libraries(premiereapp ${OGRE_LIBRARIES} ${OIS_LIBRARY} -lboost_system)
 
 set( RESOURCES_FILE
   media/
-  plugins/
   resources/ogre.cfg
   resources/plugins.cfg
   resources/resources.cfg

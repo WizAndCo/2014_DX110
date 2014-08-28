@@ -23,6 +23,8 @@ Description: Base class for all the OGRE examples
 
 #include "Ogre.h"
 #include "OgreConfigFile.h"
+#include <Overlay/OgreOverlaySystem.h>
+
 #include "ExampleFrameListener.h"
 // Static plugins declaration section
 // Note that every entry in here adds an extra header / library dependency
@@ -334,6 +336,8 @@ protected:
     {
         // Create the SceneManager, in this case a generic one
         mSceneMgr = mRoot->createSceneManager(ST_GENERIC, "ExampleSMInstance");
+	Ogre::OverlaySystem *mOverlaySystem = OGRE_NEW Ogre::OverlaySystem();
+	mSceneMgr->addRenderQueueListener(mOverlaySystem);
     }
     virtual void createCamera(void)
     {
