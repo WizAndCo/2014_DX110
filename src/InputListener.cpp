@@ -88,6 +88,11 @@ bool InputListener::keyPressed(const OIS::KeyEvent &e)
         case OIS::KC_LSHIFT:
             mVitesse *= 2;
             break;
+
+        //without this switch default statement g++ raises a warning because all values
+        //for OIS enumeration are not handled
+        default:
+            break;
     }
     
     return true;
@@ -113,6 +118,11 @@ bool InputListener::keyReleased(const OIS::KeyEvent &e)
             break;
         case OIS::KC_LSHIFT:
             mVitesse /= 2;
+            break;
+
+        //without this switch default statement g++ raises a warning because all values
+        //for the OIS enumeration are not handled
+        default:
             break;
     } 
     

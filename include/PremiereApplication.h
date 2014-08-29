@@ -3,6 +3,9 @@ using namespace std;
 #include <ExampleApplication.h>
 #include <OgreMovableObject.h>
 
+//#include <Overlay/OgreTextAreaOverlayElement.h>
+//#include <Overlay/OgreFontManager.h>
+
 #include "InputListener.h"
 
 

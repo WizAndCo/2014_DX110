@@ -14,6 +14,66 @@ void PremiereApplication::createFrameListener()
 
 void PremiereApplication::createScene()
 {
+
+    // ---- CREATION OF AN OVERLAY ----
+
+    //Creation of a white rectangle
+//    Ogre::OverlayManager& overlayManager = Ogre::OverlayManager::getSingleton();
+//    // Create an overlay
+//    Ogre::Overlay* overlay = overlayManager.create( "OverlayName");
+//
+//    // Create a panel
+//    Ogre::OverlayContainer* panel = static_cast<Ogre::OverlayContainer*>( overlayManager.createOverlayElement( "Panel", "PanelName" ) );
+//    panel->setPosition( 0.0, 0.0 );
+//    panel->setDimensions(0.1, 0.1 );
+//    panel->setMaterialName("BaseWhite" );
+//    // Add the panel to the overlay
+//    overlay->add2D( panel );
+//    // Show the overlay
+//    overlay->show();
+
+
+    //overlay with metrics
+//    OverlayManager& overlayManager = OverlayManager::getSingleton();
+//     
+//    // Create a panel
+//    OverlayContainer* panel = static_cast<OverlayContainer*>(
+//        overlayManager.createOverlayElement("Panel", "PanelName"));
+//    panel->setMetricsMode(Ogre::GMM_PIXELS);
+//    //panel->setPosition(10, 10);
+//    panel->setPosition(0.0, 0.0);
+//    panel->setDimensions(100, 100);
+//    //panel->setMaterialName("MaterialName"); // Optional background material
+//     
+//    // Create a text area
+//    TextAreaOverlayElement* textArea = static_cast<TextAreaOverlayElement*> (overlayManager.createOverlayElement("TextArea", "TextAreaName"));
+//    textArea->setMetricsMode(Ogre::GMM_PIXELS);
+//    textArea->setPosition(0, 0);
+//    textArea->setDimensions(100, 100);
+//    textArea->setCaption("Hello, World!");
+//    textArea->setCharHeight(16);
+//    
+//    //textArea->setFontName("TrebuchetMSBold");
+//    //textArea->setFontName("bluebold");
+//    textArea->setFontName("BlueHighway");
+//    
+//    textArea->setColourBottom(ColourValue(0.3, 0.5, 0.3));
+//    textArea->setColourTop(ColourValue(0.5, 0.7, 0.5));
+//     
+//    // Create an overlay, and add the panel
+//    Overlay* overlay = overlayManager.create("OverlayName");
+//    overlay->add2D(panel);
+//     
+//    // Add the text area to the panel
+//    panel->addChild(textArea);
+//     
+//    // Show the overlay
+//    overlay->show();
+
+    //-------------------------------
+
+
+
     //creation d une entite
     Entity *head= mSceneMgr->createEntity("Tete", "ogrehead.mesh" );
     
