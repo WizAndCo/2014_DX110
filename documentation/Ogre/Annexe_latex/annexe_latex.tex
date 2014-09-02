@@ -1,0 +1,324 @@
+
+%\chapter{LaTeX}
+\chapter{Latex}
+
+\section{V\'erifier sa configuration latex}
+Lors d'une importation de ce document sur un autre pc que celui utilis\'e pour \'ecrire ce document des probl\`emes peuvent appara\^itre lors de la compilation de ce fichier tex.\newline
+
+Pour v\'erifier que aucun package latex ne manque cr\'eer un fichier tex et y copier/coller le code suivant. Ce code reprend tous les packages utilis\'es pour l'\'ecriture de ce pr\'esent document (prise de notes \'a partir du tutorial du site des z\'ero sur Ogre)
+
+
+
+
+
+
+
+
+
+
+%----------------
+\begin{lstlisting}[caption={Code Latex minimal pour tester les packages latex n\'ecessaires \'a la compilation du fichier ****-ergo.tex par texmaker}]
+
+\documentclass[10pt,a4paper]{report}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{hyperref} %pr inserer des liens internet
+
+\usepackage{verbatim}%pour linsertion brute de commande LaTeX dans le texte
+\usepackage{moreverb}
+
+\usepackage[french]{babel}
+\usepackage[latin1]{inputenc}
+
+\usepackage{listings}
+\usepackage{xcolor}
+
+\usepackage{makeidx}
+
+\title{OGRE}
+\author{O}
+
+\begin{document}
+This is a MINIMUM WORKING EXAMPLE. hgf\newline
+
+\'e
+\`e
+\^e
+\newline
+
+\'A
+\`A
+\^S
+\end{document}
+
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%------------------------
+
+
+
+\section{Caract\`eres accentu\'es}
+
+Pour faire un \`{u}
+\begin{verbatim}
+\`{u}
+\end{verbatim}
+
+
+Pour faire un \^{a}
+\begin{verbatim}
+\^{a}
+\end{verbatim}
+
+Pour faire un \`{a}
+\begin{verbatim}
+\`{a} ou \`a
+\end{verbatim}
+
+
+Pour faire un \"o
+\begin{verbatim}
+\''{o} ou \"o
+\end{verbatim}
+
+Pour faire un \^{i}
+\begin{verbatim}
+\^{i}
+\end{verbatim}
+
+Pour faire un \`e
+\begin{verbatim}
+\`e
+\end{verbatim}
+
+Pour faire un \^e
+\begin{verbatim}
+\^e
+\end{verbatim}
+
+Pour faire un \'{e}
+\begin{verbatim}
+\'{e} ou \'e
+\end{verbatim}
+
+Pour faire un \c{c}
+\begin{verbatim}
+\c{c}
+\end{verbatim}
+
+Pour faire un \.o
+\begin{verbatim}
+\.{o} ou \.o
+\end{verbatim}
+
+
+Pour faire un \~u
+\begin{verbatim}
+\~{u} ou \~u
+\end{verbatim}
+
+Pour faire un \=o
+\begin{verbatim}
+\={o} ou \=o
+\end{verbatim}
+
+
+Pour faire un \^u
+\begin{verbatim}
+\^u
+\end{verbatim}
+
+Pour faire des guillemets
+\begin{verbatim}
+''guillemets''
+\end{verbatim}
+
+
+\subsection{M\'ethode alternative (non test\'ee)}
+
+Il semble possible d'ins\'erer directement tous les caract\`eres fran\c{c}ais, pour d\'emo tester le code suivant:
+
+\begin{lstlisting}[caption={Insertion de caract\`eres fran\c{c}ais}][language=latex]
+\documentclass[10pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\begin{document}
+entrer des caracteres accentues francais
+guillemets
+\end{document}
+
+\end{lstlisting}
+
+Le probl\`eme est que cel\`a a des cons\'equences sur le code d\'ej\`a \'ecrit.
+
+
+
+\section{Notes}
+\subsection{Note dans la marge}
+Une note dans la marge\marginpar{ceci est une note
+dans la marge}
+\subsection{Note de bas de marge}
+Une note de bas de page\footnote{Comme celle-ci.}.
+
+
+
+\section{Liens hyperlien}
+Deux m\'ethodes diff\'erentes:
+
+\begin{itemize}
+\item Le lien est ajout\' e de mani\`ere brute:
+
+\begin{lstlisting}[caption={Insertion de liens Internet}][language=latex]
+ceci est un lien brut \url{http://estcequecestbientotleweekend.fr/}
+\end{lstlisting}
+
+et cel\`a donne ceci:\newline
+ceci est un lien brut
+\url{http://estcequecestbientotleweekend.fr/}\newline
+\end{itemize}
+
+
+
+\begin{itemize}
+\item Un mot m\`ene vers le lien, ci-dessous un clic sur ''lien'' m\`ene au lien spécifi\'e
+
+\begin{lstlisting}[caption={Insertion de liens Internet}][language=latex]
+ceci est un lien \href{http://estcequecestbientotleweekend.fr/}{lien}
+\end{lstlisting}
+
+et cel\`a donne ceci:\newline
+ceci est un \href{http://estcequecestbientotleweekend.fr/}{lien}
+\end{itemize}
+
+
+
+
+
+
+\section{Bloc comment\'e}
+Un bloc comment\'e se fait avec le package verbatim
+\begin{verbatim}
+\begin{comment}
+	bloc comment\'e
+\end{comment}
+\end{verbatim}
+
+
+
+\section{Num\'erotation des chapitres et autres}
+Apparemment le fait d'\'ecrire 
+
+\begin{verbatim}
+\section
+\end{verbatim}
+
+fait que la section sera num\'erot\'ee, 
+
+\begin{verbatim}
+\section*
+\end{verbatim}
+
+ne sera pas num\'erot\'ee.
+
+
+
+
+\begin{comment}
+\section{Underscore}
+Il faut penser \`{a} \'echapper les underscore sinon la compilation plante. On \'echappe avec 
+\end{comment}
+
+
+\section{Insertion d'images}
+Pour ins\'erer des images la m\'ethode suivie est la suivante:
+
+\begin{lstlisting}[caption={Insertion d'image}][language=latex]
+\usepackage{graphicx}
+
+\begin{document}
+	\begin{center}
+	\includegraphics[scale=0.5]{monimage.jpg} 
+	\end{center}
+\end{document}
+
+\end{lstlisting}
+
+
+
+
+
+
+\section{Exemple d'insertion de code avec lstlisting}
+L'insertion de code se fait grace aux packages:
+
+\begin{lstlisting}
+\usepackage{listings} %pr inserer du code
+\usepackage{xcolor}
+\end{lstlisting}
+
+On peut ensuite d\'efinir certain param\`etres d'insertion
+\begin{lstlisting}[caption={Commande pour sp\'ecifier les param\`etres d'insertion de code}] [language=tex]
+\lstset{
+basicstyle=\small, % print whole listing small
+keywordstyle=\color{blue}\bfseries\underbar,
+% underlined bold black keywords
+identifierstyle=, % nothing happens
+commentstyle=\color{white}, % white comments
+stringstyle=\ttfamily, % typewriter type for strings
+showstringspaces=false} % no special string spaces
+\end{lstlisting}
+
+
+\begin{lstlisting}
+for i:=maxint to 0 do
+begin
+{ do nothing }
+end;
+Write('Case insensitive ');
+Write('Pascal keywords.');
+\end{lstlisting}
+
+
+cf \url{http://tex.stackexchange.com/questions/21106/adding-c-code-in-latex}
+
+
+\section{Cr\'eer un index}
+Pour cr\'eer un index:
+cf \url{http://www.tuteurs.ens.fr/logiciels/latex/makeindex.html}
+
+pour que l'index soit g\'er\'e par TexMaker:
+cf \url{http://www.xm1math.net/doculatex/makeindex.html}
+
+
+
+
+%bizarrement le \part ci-dessous creee une entree ds la structure du document presentee par TexMaker
+\section{Cr\'eer une annexe}
+
+Pour cr\'er une annexe il faut utiliser la commande
+\begin{lstlisting}[caption={Cr\'eer une annexe}] [language=latex]
+\appendix		
+%\chapter{Test}	% une "Annexe A Test" sera creee
+\chapter{test}	% sera creee "A.1 test"
+\end{lstlisting}

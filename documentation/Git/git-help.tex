@@ -1,0 +1,128 @@
+\documentclass[10pt,a4paper]{report}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{hyperref} %pr inserer des liens internet
+
+\usepackage{verbatim} %pour linsertion brute de commande LaTeX dans le texte
+\usepackage{moreverb}
+
+\usepackage{graphicx} %pour linsertion dimages
+
+%Lignes ajout\'ees pour les documents en fran\c{c}ais, pour que soit prises en compte les particularit\'es de la typographie fran\c{c}aise; c'est aussi grâce \`{a} ce package que la date est affich\'ee automatiquement en fran\c{c}ais, que le titre de la table des mati\`eres est « Table des mati\`eres » et non « Contents », etc. Les deux lignes suivantes permettent d'avoir des caract\`eres correctement accentu\'es en toutes circonstances.
+\usepackage[french]{babel}
+\usepackage[latin1]{inputenc}
+
+\usepackage{listings}
+\usepackage{listings} %pr inserer du code
+\usepackage{xcolor}
+
+%Pour faire un index
+\usepackage{makeidx}
+
+%Pour faire un index 
+\makeindex
+
+\title{GIT HELP}
+\author{AdKoba}
+
+
+\begin{document}
+
+\section{Nature de Git} 
+
+Git est un gestionnaire de versions distribu\'es (DVCS en anglais pour Distributed Version Control Systems) qui repose sur deux fonctionnalit\'es majeures:
+\begin{itemize}
+\item Avec Git, les clients n'extraient plus seulement la derni\`ere version d'un fichier, mais ils dupliquent compl`etement le d\'ep\^ot. Ainsi, si le serveur dispara\^it et si les syst\`emes collaboraient via ce serveur, n'importe quel d\'ep\^ot d'un des clients peut \^etre copi\'e sur le serveur pour le restaurer. Chaque extraction devient une sauvegarde compl\`ete de toutes les donn\'ees
+\item Git consid\`ere les donn\'ees. Les syst\`emes (tel que CVS, Subversion, Perforce, Bazaar et autres) consid\`erent l'information qu'ils g\`erent comme une liste de fichiers et les modifications effectu\'ees sur chaque fichier dans le temps. Git ne g\`ere pas et ne stocke pas les informations de cette mani\`ere. \`A la place, il pense ses donn\'ees plus comme un instantan\'e d'un mini syst\`eme de fichiers. \`A chaque fois que vous validez ou enregistrez l' \'etat du projet dans Git, il prend effectivement un instantan\'e du contenu de votre espace de travail \`a ce moment et enregistre une r\'ef\'erence \`a cet instantan\'e. Pour \^etre efficace, si les fichiers n'ont pas chang\'e, Git ne stocke pas le fichier \`a nouveau, juste une r\'ef\'erence vers le fichier original qui n'a pas \'et\'e modifi\'e.\newline 
+\end{itemize} 
+
+De plus avec Git:
+\begin{itemize}
+\item Presque toutes les op\'erations sont locales: 
+Par exemple, pour parcourir l'historique d'un projet, Git n'a pas besoin d'aller le chercher sur un serveur pour vous l'afficher ; il n'a qu'\`a simplement le lire directement dans votre base de donn\`ees locale. 
+Ainsi on peut enti\`erement travailler hors-connexion 
+\item Git g\`ere l'int\'egrit\'e. 
+Dans Git, tout est v\'erifi\'e par une somme de contr\^ole avant d'\^etre stock\'e. Par la suite cette somme de contr\^ole, signature unique, sert de r\'ef\'erence. Cela signifie qu'il est impossible de modifier le contenu d'un fichier ou d'un r\'epertoire sans que Git ne s'en aper\c{c}oive. Cette fonctionnalit\'e est ancr\'ee dans les fondations de Git et fait partie int\'egrante de sa philosophie. Vous ne pouvez pas perdre des donn\'ees en cours de transfert ou corrompre un fichier sans que Git ne puisse le d\'etecter
+\item G\'en\'eralement, Git ne fait qu'ajouter des donn\'ees.
+D\`es que vous avez valid\'e un instantan\'e dans Git, il est tr\`es difficile de le perdre
+\end{itemize}
+
+\section{Les 3 \'etats de Git}
+
+Ici, il faut \^etre attentif. Il est primordial de se souvenir de ce qui suit si vous souhaitez que le reste de votre apprentissage s'effectue sans difficult\'e. 
+
+Git g\`ere trois \'etats dans lesquels les fichiers peuvent r\'esider : 
+\begin{itemize}
+\item Valid\'e: signifie que les donn\'ees sont stock\'ees en s\'ecurit\'e dans votre base de donn\'ees locale. 
+\item Modifi\'e: signifie que vous avez modifi\'e le fichier mais qu'il n'a pas encore \'et\'e valid\'e en base. 
+\item Index\'e: signifie que vous avez marqu\'e un fichier modifi\'e dans sa version actuelle pour qu'il fasse partie du prochain instantan\'e du projet.
+\end{itemize}
+
+Ceci nous m\`ene aux trois sections principales d'un projet Git : le r\'epertoire Git, le r\'epertoire de travail et la zone d'index.
+
+\section{Configuration}
+
+\noindent Notre identit\'e d'utilisateur :
+\begin{lstlisting}[language=bash]
+$ git config --global user.name "John Doe"
+$ git config --global user.email johndoe@example.com
+\end{lstlisting}
+
+\noindent L'\'editeur de texte qui sera utilis\'e quand Git vous demande de saisir un message.
+\begin{lstlisting}[language=bash]
+$ git config --global core.editor vim
+\end{lstlisting}
+
+\noindent Une autre option utile est le param\'etrage de l'outil de diff\'erences \'e utiliser pour la r\'esolution des conflits de fusion.
+\begin{lstlisting}[language=bash]
+$ git config --global merge.tool vimdiff
+\end{lstlisting}
+
+\section{Les branches}
+
+Les branches sont tr\`es utiles pour travailler sur des stories diff\'erentes. L'id\'ee est de cr\'eer une branche par story et d'y effectuer tout le travail relatif \`a celle-ci sans impacter directement la branche master. 
+
+\noindent Pour cr\'eer une branche on peut proc\'eder comme suit:
+\begin{lstlisting}[language=bash]
+$ git branch my_branch
+$ git checkout my_branch
+\end{lstlisting}
+
+\noindent ou directement:
+\begin{lstlisting}[language=bash]
+$ git checkout -b my_branch
+Switched to a new branch my_branch
+\end{lstlisting}
+
+A partir de cet instant notre HEAD pointe sur cette nouvelle branche. Toutes les modifications qui y seront r\'ealis\'ees le seront uniquement dans celle-ci
+
+On peut ainsi cr\'eer plusieurs branches en parall\`ele pour travailler sur diff\'erents sujets.
+
+Quand le travail sur une branche est termin\'e, il suffit de commiter les modifications puis de merger la branche avec la branche master pour pouvoir les publier.
+
+\noindent On commite
+\begin{lstlisting}[language=bash]
+$ git commit -a -m 'commit message'
+\end{lstlisting}
+
+\noindent On rebascule sur la branche master
+\begin{lstlisting}[language=bash]
+$ git checkout master
+\end{lstlisting}
+
+\noindent Et on merge
+\begin{lstlisting}[language=bash]
+$ git merge my_branch
+\end{lstlisting}
+
+\noindent Il ne reste plus qu'\`a publier les modifications:
+\begin{lstlisting}[language=bash]
+$ git pull
+\end{lstlisting}
+
+%l index sera ecrit ici
+\printindex
+
+\end{document}
