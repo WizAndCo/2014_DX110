@@ -1,0 +1,36 @@
+
+\chapter{Une application \`a partir de z\'ero}
+
+Apr\`es avoir vue le fonctionnement g\'en\'eral des classes de bases de Ogre, il est temps de s'attaquer au fonctionnement du moteur. Dans la suite de ce chapitre, nous allons apprendre \'a nous passer de la classe ExampleApplication pour la remplacer par notre propre classe d'initialisation du moteur.
+
+\section{Pr\'eparation}
+
+\subsection{Les \'etapes}
+
+Pour que Ogre soit correctement initialis\'e et pr\`es \'à \^etre utilis\'e, on peut identifier les huits points suivants:
+\begin{itemize}
+- La cr\'eation d'un objet Root
+- La d\'efinition des ressources \`a utiliser
+- La cr\'eation du syst\`eme et de la fen\^etre de rendu (appel\'ee \italic{RenderWindow})
+- L'initialisation des ressources 
+- La cr\'eation de la sc\`ene 
+- Le chargement \'eventuel des plugins additionnels
+- La cr\'eation des frame listeners
+- Le lancement de la boucle infinie
+\end{itemize}
+
+\subsection{Vocabulaire}
+
+Le Root
+
+Le Root est l'objet de base du moteur Ogre. C'est autour de lui que tout se construit et c'est donc lui qui doit-\^etre cr\'e\'e en premier. Son cr\'eation permet l'initialisation du moteur afin de pr\'eparer le terrain pour les objets qui vont venir graviter autour.
+
+Les ressources
+
+Nous allons travailler sur une application pour laquel la vitesse d'ex\'ecution est primordiale. Charger les ressources \'a la vol\'ee demande du temps \'a l'ordianteur (acc\`ees aux fichiers sur le disque dur, lecture des fichiers, allocation des ressources en m\'emoire et enfin chargement des donn\'ees en m\'emoire pour pouvoir les utiliser). Il est donc important d'effectuer toutes ces op\'erations au d\'emarrage du moteur (ou comme dans un jeu au chargement d'un nouveau niveau). Ainsi une fois que les ressources sont charg\'ees, plus besoin d'y toucher, on n'a plus qu'\'a s'occuper des m\'ecanismes du jeu. 
+
+Le \italic{RenderWindow}
+
+Un objet \italic{RenderWindow} repr\'esente la fen\^etre contenant la sc\`ene affich\'ee \'a l'\'ecran. Attention toutefois, on ne parle pas ici de la fen\^etre du syst\`eme d'exploitation mais du cadre dans lequel est rendu la sc\`ene. La diff\'erence est importante car si l'on programme un \'editeur de sc\`ene par exemple, la fen\^etre du programme contiendra non seulement la \italic{RenderWindow} mais aussi des menus et des boites \'a outils
+
+La boucle infinie  
