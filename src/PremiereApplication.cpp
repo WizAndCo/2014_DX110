@@ -1,7 +1,9 @@
 #include "PremiereApplication.h"
 
 
-
+/**
+ * createFrameListener: creation des frames listener pour la prise en compte des entrees utilisateurs
+ */
 void PremiereApplication::createFrameListener()
 {
     //activation du buffer pour la souris et le clavier
@@ -11,69 +13,11 @@ void PremiereApplication::createFrameListener()
     mRoot -> addFrameListener(mFrameListener);
 }
 
-
+/**
+ * createScene: creation de la scene avec une tete d'ogre flottant au-dessus d'un carre de pelouse
+ */
 void PremiereApplication::createScene()
 {
-
-    // ---- CREATION OF AN OVERLAY ----
-
-    //Creation of a white rectangle
-//    Ogre::OverlayManager& overlayManager = Ogre::OverlayManager::getSingleton();
-//    // Create an overlay
-//    Ogre::Overlay* overlay = overlayManager.create( "OverlayName");
-//
-//    // Create a panel
-//    Ogre::OverlayContainer* panel = static_cast<Ogre::OverlayContainer*>( overlayManager.createOverlayElement( "Panel", "PanelName" ) );
-//    panel->setPosition( 0.0, 0.0 );
-//    panel->setDimensions(0.1, 0.1 );
-//    panel->setMaterialName("BaseWhite" );
-//    // Add the panel to the overlay
-//    overlay->add2D( panel );
-//    // Show the overlay
-//    overlay->show();
-
-
-    //overlay with metrics
-//    OverlayManager& overlayManager = OverlayManager::getSingleton();
-//     
-//    // Create a panel
-//    OverlayContainer* panel = static_cast<OverlayContainer*>(
-//        overlayManager.createOverlayElement("Panel", "PanelName"));
-//    panel->setMetricsMode(Ogre::GMM_PIXELS);
-//    //panel->setPosition(10, 10);
-//    panel->setPosition(0.0, 0.0);
-//    panel->setDimensions(100, 100);
-//    //panel->setMaterialName("MaterialName"); // Optional background material
-//     
-//    // Create a text area
-//    TextAreaOverlayElement* textArea = static_cast<TextAreaOverlayElement*> (overlayManager.createOverlayElement("TextArea", "TextAreaName"));
-//    textArea->setMetricsMode(Ogre::GMM_PIXELS);
-//    textArea->setPosition(0, 0);
-//    textArea->setDimensions(100, 100);
-//    textArea->setCaption("Hello, World!");
-//    textArea->setCharHeight(16);
-//    
-//    //textArea->setFontName("TrebuchetMSBold");
-//    //textArea->setFontName("bluebold");
-//    textArea->setFontName("BlueHighway");
-//    
-//    textArea->setColourBottom(ColourValue(0.3, 0.5, 0.3));
-//    textArea->setColourTop(ColourValue(0.5, 0.7, 0.5));
-//     
-//    // Create an overlay, and add the panel
-//    Overlay* overlay = overlayManager.create("OverlayName");
-//    overlay->add2D(panel);
-//     
-//    // Add the text area to the panel
-//    panel->addChild(textArea);
-//     
-//    // Show the overlay
-//    overlay->show();
-
-    //-------------------------------
-
-
-
     //creation d une entite
     Entity *head= mSceneMgr->createEntity("Tete", "ogrehead.mesh" );
     
@@ -122,8 +66,8 @@ void PremiereApplication::createScene()
     createLux("ponctuelle", head);//lumiere ponctuelle
     //createLux("directionnelle", head);//lumiere directionnelle
     //createLux("spot", head);//lumiere projecteur
-
 }
+
 
 /*
 cree une lumiere selon le parametre passe:
@@ -180,14 +124,17 @@ void PremiereApplication::createLux(std::string prmLightType, MovableObject * pr
     mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
 }
 
-/*definit la position de notre point de vue*/
+
+/**
+ * createCamera: definit la position de notre point de vue
+ */
 void PremiereApplication::createCamera()
 {
     //creation de la camera
     mCamera = mSceneMgr->createCamera("Ma Camera");
 
     //position de la camera
-    mCamera->setPosition(Vector3(-100.0, 150.0, 200.0));
+    mCamera->setPosition(Vector3(-100.0, 150.0, 200.0));    
 
     //permet de determiner le point de la scene que regarde notre camera
     mCamera->lookAt(Vector3(0.0, 100.0, 0.0));
@@ -197,8 +144,15 @@ void PremiereApplication::createCamera()
     //trouver un objet pour être affichr à l'écran.
     mCamera->setNearClipDistance(1);
     mCamera->setFarClipDistance(1000);
+
+    if (mRoot->getRenderSystem()->getCapabilities()->hasCapability(Ogre::RSC_INFINITE_FAR_PLANE)){
+        mCamera->setFarClipDistance(0);
+    }
 }
 
+/**
+ * createViewports: creation d'un second viewport
+ */
 void PremiereApplication::createViewports()
 {
     //la creation du Viewport, appelee par la fenetre et prenant en parametre la

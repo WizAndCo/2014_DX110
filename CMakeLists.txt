@@ -25,6 +25,7 @@ else (OGRE_Overlay_FOUND)
   message(SEND_ERROR "OgreOverlay Library not found.")
 endif(OGRE_Overlay_FOUND)
 
+
 # L'exemple dpend aussi de OIS, une lib pour grer la souris, clavier, joystick...
 find_package(OIS REQUIRED)
 
@@ -42,8 +43,10 @@ add_executable (
 
 message(STATUS "OGRE Libraries used to link are ${OGRE_LIBRARIES}")
 
-# Et pour finir, on lie l'excutable avec les librairies que find_package nous a gentillement trouv.
+# Et pour finir, on lie l'excutable avec les librairies que find_package nous a gentillement trouve.
 target_link_libraries(premiereapp ${OGRE_LIBRARIES} ${OIS_LIBRARY} -lboost_system)
+
+
 
 set( RESOURCES_FILE
   media/
