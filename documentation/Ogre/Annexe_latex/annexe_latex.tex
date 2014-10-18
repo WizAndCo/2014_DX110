@@ -251,17 +251,27 @@ Il faut penser \`{a} \'echapper les underscore sinon la compilation plante. On \
 
 
 \section{Insertion d'images}
-Pour ins\'erer des images la m\'ethode suivie est la suivante:
+Pour ins\'erer des images il faut ajouter le package graphicx:
+
+\begin{lstlisting}[caption={Ajout du packqge pour l'insertion d'image}][language=latex]
+\usepackage{graphicx}
+\end{lstlisting}
+
+L'insertion d'image a plusieurs param\`etres, ci-dessous 2 mani\`eres diff\'errentes d'ins\'erer des images:
 
 \begin{lstlisting}[caption={Insertion d'image}][language=latex]
-\usepackage{graphicx}
-
 \begin{document}
 	\begin{center}
 	\includegraphics[scale=0.5]{monimage.jpg} 
 	\end{center}
 \end{document}
 
+
+\begin{figure}[hbtp]
+    \caption{Terrain.png}
+    \centering
+    \includegraphics[width=4cm]{Base_de_Ogre/Garder_les_pieds_sur_terre/terrain.png}
+\end{figure}
 \end{lstlisting}
 
 
@@ -321,4 +331,92 @@ Pour cr\'er une annexe il faut utiliser la commande
 \appendix		
 %\chapter{Test}	% une "Annexe A Test" sera creee
 \chapter{test}	% sera creee "A.1 test"
+
+
+
+
+\section{Creer des boites pour des notes}
+
+\begin{lstlisting}[caption={Commande 1 pour créer des boites}] [language=tex]
+
+%pour faire de jolies boites contenant des notes
+\usepackage{tikz}
+  \usetikzlibrary{shapes,shadows}
+  \tikzstyle{abstractbox} = [draw=black, fill=white, rectangle, 
+  inner sep=10pt, style=rounded corners, drop shadow={fill=black,
+  opacity=1}]
+  \tikzstyle{abstracttitle} =[fill=white]
+ 
+  \newcommand{\boxabstract}[2][fill=white]{
+    \begin{center}
+      \begin{tikzpicture}
+        \node [abstractbox, #1] (box)
+        {\begin{minipage}{0.80\linewidth}
+%            \setlength{\parindent}{2mm}
+            \footnotesize #2
+          \end{minipage}};
+        \node[abstracttitle, right=10pt] at (box.north west) {Abstract};
+      \end{tikzpicture}
+    \end{center}
+  }
+  
+\boxabstract{Test}
 \end{lstlisting}
+
+\boxabstract{Une boites avec boxabstract}
+
+
+\begin{lstlisting}[caption={Commande 2 pour créer des boites}] [language=tex]
+
+%pour faire de jolies boites
+\usepackage{color}
+%\usepackage{lipsum}
+\newcommand\tipbox[1]{%
+  \begin{center}%
+    \fcolorbox{black}{white}{%
+      \begin{minipage}[t]{\dimexpr\textwidth-2\fboxsep-2\fboxrule}%
+        #1%
+      \end{minipage}}%
+  \end{center}}
+  
+  
+\tipbox{If a run-time error can be fixed, the exception is called checked. ... }
+\end{lstlisting}
+
+\tipbox{Une boite avec tipbox}
+
+
+\begin{lstlisting}[caption={Commande 3 pour créer des boites}] [language=tex]
+%pour faire de jolies boite latérales contenant des notes
+\usepackage[verbose]{wrapfig}
+\usepackage{bclogo}
+\usepackage{environ}
+\usepackage{lipsum}
+
+\NewEnviron{mybox}[1]
+  {\wrapfigure{r}{.5\textwidth}
+  \setlength\fboxrule{1.5pt}
+  \fcolorbox{blue!70}{white}{%
+  \begin{minipage}{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}
+  \parbox[t][1cm][t]{1cm}{\bccrayon}%
+  \parbox[t][1cm][t]{\dimexpr\linewidth-1cm\relax}{\bfseries#1}
+  \BODY
+  \end{minipage}}%
+\endwrapfigure}
+
+
+\begin{mybox}{Java Programming 24-hour - Exception}
+
+If a run-time error can be fixed, the exception is called checked. The method reads() for e...
+\end{mybox}
+\end{lstlisting}
+
+
+\begin{lstlisting}[caption={Commande 3 pour créer des boites}] [language=tex]
+\begin{mybox}{Titre}
+Une boite avec mybox
+\end{mybox}
+
+
+\end{lstlisting}
+

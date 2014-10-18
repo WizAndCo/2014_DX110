@@ -18,110 +18,127 @@ void PremiereApplication::createFrameListener()
  */
 void PremiereApplication::createScene()
 {
-    //creation d une entite
-    Entity *head= mSceneMgr->createEntity("Tete", "ogrehead.mesh" );
-    
-    //creation d un noeud
-    SceneNode *node= mSceneMgr->getRootSceneNode()->createChildSceneNode("nodeTete" , Vector3::ZERO, Quaternion::IDENTITY);
-    
-    node->yaw(Radian(Math::PI));
-    node->yaw(Radian(Math::PI));
-
-    //setPosition place le noeud aux coord passees en parametres
-    Vector3 position = Vector3(30.0, 50.0, 0.0);
-    node->setPosition(position);
-
-    node->setPosition(30.0, 50.0, 0.0); 
-    /*equivalent a
-    Vector3 position = Vector3(30.0, 50.0, 0.0);
-    node->setPosition(position);
-    */
-
-    //deplace le noeud par rapport a sa position actuelle
-    node->translate(-30.0, 50.0, 0.0); //par defaut la trnslt se fait par rap a TS_WORLD
-   
-    //attachement de l entite au noeud
-    node->attachObject(head);
-
-    //creation d un plan
-    Plane plan(Vector3::UNIT_Y, 0);
-
-    //creation d un mesh cad l objet 3d visible ds la scene
-    MeshManager::getSingleton().createPlane("sol",
-                ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-                plan, 500, 500, 10, 10, true, 1, 1, 1, Vector3::UNIT_Z); 
-
-    //entite qui representera le plan
-    Entity *ent= mSceneMgr->createEntity("EntiteSol", "sol");
-
-    //ajout du materiau a l entite
-    ent->setMaterialName("Examples/GrassFloor");//texture de pelouse
-    /*les differents materiaux sont sous /media/materials/scritps, par ex:
-    ent->setMaterialName("Examples/WaterStream");//texture d eau animee*/
-
-    //creation d un noeud
-    node = mSceneMgr->getRootSceneNode()->createChildSceneNode();
-    node->attachObject(ent);
-
-    createLux("ponctuelle", head);//lumiere ponctuelle
-    //createLux("directionnelle", head);//lumiere directionnelle
-    //createLux("spot", head);//lumiere projecteur
+    createTerrain();
 }
 
 
-/*
-cree une lumiere selon le parametre passe:
-    createLux("ponctuelle"); -> lumiere ponctuelle
-    createLux("directionnelle"); -> lumiere directionnelle
-    createLux("spot"); -> lumiere projecteur
 
-une lumiere noire est cree au debut de la methode
 
-une ombre est cree en fin de methode
-*/
-void PremiereApplication::createLux(std::string prmLightType, MovableObject * prmEnt)
+
+
+
+
+
+void PremiereApplication::createTerrain()
 {
-    //application d une couleur noire
-    mSceneMgr->setAmbientLight(ColourValue(0.0, 0.0, 0.0)); 
+    
+    Ogre::Vector3 lightdir(0.55f, -0.3f, 0.75f);
+    
+    mLight = mSceneMgr->createLight("terrainLight");
+    mLight->setType(Light::LT_DIRECTIONAL);
+    mLight->setDirection(lightdir);
+    mLight->setDiffuseColour(Ogre::ColourValue::White);
+    mLight->setSpecularColour(Ogre::ColourValue(0.4f, 0.4f, 0.4f)); 
+    
+    mGlobals = OGRE_NEW Ogre::TerrainGlobalOptions();
+    mGlobals->setMaxPixelError(8);                                      /**<spécifie la précision de rendu (en nbr de pixel) du terrain*/    
+    
+    //application des réglages de lumière aux options globales
+    mGlobals->setLightMapDirection(mLight->getDerivedDirection());
+    mGlobals->setCompositeMapDistance(3000);
+    mGlobals->setCompositeMapAmbient(mSceneMgr->getAmbientLight());
+    mGlobals->setCompositeMapDiffuse(mLight->getDiffuseColour());
+    
+    
+    mTerrain = OGRE_NEW Ogre::Terrain(mSceneMgr);/**<Création du terrain*/
+    
+    Ogre::Image img;
+    img.load("terrain.png", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);/**<Chargement de l'image Heighmaps contenant les infos pour le relief*/
+    
+    ///Mise en place des propriétés générales du terrain
+    Ogre::Terrain::ImportData imp;/**<Création de l'objet qui contiendra toutes les infos pour le terrain*/
+    imp.inputImage = &img;/**<recuperation de l image*/
+    imp.terrainSize = img.getWidth();/**<recuperation de la taille de l image (les terrains sont carres, l'image doit donc etre carree)*/
 
-    //definition d une lumiere 
-    Light *light= mSceneMgr->createLight("lumiere1");
-
-    if (prmLightType == "ponctuelle")
+    imp.worldSize = 8000;/**<taille du terrain en unites de la scene (plus ce nbre est grande, plus l'image est grande)*/
+    imp.inputScale = 600;/**<echelle adoptee pour l altitude du terrain (difference entre un pt a l'altitude 0 (pt en blanc ds terrain.png) et un point à l'altitude max (pt en noir))*/
+    imp.minBatchSize = 33;/**<taille min du batch pour le terrain*/
+    imp.maxBatchSize = 65;/**<taille max du batch pour le terrain*/
+    
+    ///Mise en place des textures
+    imp.layerList.resize(1);/**<donne la taille de la liste des calques*/
+    imp.layerList[0].worldSize = 100;/**<donne la taille de la texture ds le monde (plus le nbre est gd plus la texture est zoomée)*/
+    ///insertion de textures dans notre calque
+    imp.layerList[0].textureNames.push_back("grass_green-01_diffusespecular.dds");/**>contient les couleurs, les motifs du materiau*/
+    imp.layerList[0].textureNames.push_back("grass_green-01_normalheight.dds");/**<contient des infos sur le relief du materiau*/
+    
+    ///Filtrage anisotropique (affecte toutes les textures)
+    Ogre::MaterialManager::getSingleton().setDefaultTextureFiltering(Ogre::TFO_ANISOTROPIC);
+    Ogre::MaterialManager::getSingleton().setDefaultAnisotropy(8);
+    
+    
+    
+    
+    
+    
+    ///Rajout de calques dans notre liste
+    imp.layerList.resize(3);
+    imp.layerList[0].worldSize = 100;
+    imp.layerList[0].textureNames.push_back("grass_green-01_diffusespecular.dds");
+    imp.layerList[0].textureNames.push_back("grass_green-01_normalheight.dds");
+    imp.layerList[1].worldSize = 30;
+    imp.layerList[1].textureNames.push_back("growth_weirdfungus-03_diffusespecular.dds");
+    imp.layerList[1].textureNames.push_back("growth_weirdfungus-03_normalheight.dds");
+    imp.layerList[2].worldSize = 200;
+    imp.layerList[2].textureNames.push_back("dirt_grayrocky_diffusespecular.dds");
+    imp.layerList[2].textureNames.push_back("dirt_grayrocky_normalheight.dds");
+    
+    mTerrain->prepare(imp);/**<on fournit toutes les informations necessaires au terrain*/
+    mTerrain->load();/**<chragement du terrain*/    
+    
+    
+    
+    
+    ///pour definir des bandes d'altitude avec une texture différente
+    Ogre::Real minHeight1 = 70;
+    Ogre::Real fadeDist1 = 40;
+    Ogre::Real minHeight2 = 70;
+    Ogre::Real fadeDist2 = 15;
+    
+    
+    ///recuperation du blend map pour le premier terrain
+    Ogre::TerrainLayerBlendMap* blendMap1 = mTerrain->getLayerBlendMap(1);/**<recuperation du blend map*/
+    Ogre::TerrainLayerBlendMap* blendMap2 = mTerrain->getLayerBlendMap(2);/**<recuperation du blend map*/
+    
+    ///plaquage de la texture..
+    float* pBlend1 = blendMap1->getBlendPointer();
+    float* pBlend2 = blendMap2->getBlendPointer();
+    ///..en fonction de l'altitude
+    for (Ogre::uint16 y = 0; y < mTerrain->getLayerBlendMapSize(); ++y)
     {
-        //definition du type de lumiere
-        light->setType(Light::LT_POINT);//lumiere ponctuelle
-
-        //definition de la position de la lumiere
-        light->setPosition(-100, 200, 100);
+        for (Ogre::uint16 x = 0; x < mTerrain->getLayerBlendMapSize(); ++x)
+        {
+            Ogre::Real terrainX, terrainY, transparence;
+            
+            blendMap1->convertImageToTerrainSpace(x, y, &terrainX, &terrainY);
+            Ogre::Real height = mTerrain->getHeightAtTerrainPosition(terrainX, terrainY);
+            
+            transparence = (height - minHeight1) / fadeDist1;
+            transparence = Ogre::Math::Clamp(transparence, (Ogre::Real)0, (Ogre::Real)1);
+            *pBlend1++ = transparence * 255;
+            
+            transparence = (height - minHeight2) / fadeDist2;
+            transparence = Ogre::Math::Clamp(transparence, (Ogre::Real)0, (Ogre::Real)1);
+            *pBlend2++ = transparence * 255;
+        }
     }
-    else if (prmLightType == "directionnelle")
-    {
-        light->setType(Light::LT_DIRECTIONAL);//lumiere directionnelle
-        light->setDirection(10.0, -20.0, -5);//vecteur directeur de la lumiere directionnelle
-
-        //definition de la position de la lumiere
-        light->setPosition(-100, 200, 100);
-    }
-    else
-    {
-        light->setType(Light::LT_SPOTLIGHT);//lumiere directionnelle
-        light->setDirection(0.0, -1, 1);//vecteur directeur de la lumiere directionnelle
-        light->setSpotlightRange(Degree(30), Degree(60), 1.0);
-    }
-
-    //definition des couleur des lumieres diffuse
-    light->setDiffuseColour(1.0, 0.7, 0.1);
-    //et speculaire
-    light->setSpecularColour(1.0, 0.7, 0.1);
-
-    //ombre
-    //activation de la projection des ombres
-    light->setCastShadows(true);
-    prmEnt->setCastShadows(true);
-
-    //activation des ombres
-    mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
+    
+    blendMap1->dirty();/**<precise que les donnees de la blend Map st obsolètes*/
+    blendMap1->update();/**<fait la mise a jour des donnees de la blend map*/
+    blendMap2->dirty();/**<precise que les donnees de la blend Map st obsolètes*/
+    blendMap2->update();/**<fait la mise a jour des donnees de la blend map*/ 
+    
+    mTerrain->freeTemporaryResources();/**<liberation de la memoire allouee temporairement*/
 }
 
 
@@ -135,6 +152,7 @@ void PremiereApplication::createCamera()
 
     //position de la camera
     mCamera->setPosition(Vector3(-100.0, 150.0, 200.0));    
+    mCamera->setPosition(-100, 500, 200);
 
     //permet de determiner le point de la scene que regarde notre camera
     mCamera->lookAt(Vector3(0.0, 100.0, 0.0));
@@ -143,7 +161,7 @@ void PremiereApplication::createCamera()
     //sont les distances minimale et maximale auxquelles doit se
     //trouver un objet pour être affichr à l'écran.
     mCamera->setNearClipDistance(1);
-    mCamera->setFarClipDistance(1000);
+    mCamera->setFarClipDistance(20000);
 
     if (mRoot->getRenderSystem()->getCapabilities()->hasCapability(Ogre::RSC_INFINITE_FAR_PLANE)){
         mCamera->setFarClipDistance(0);
@@ -164,7 +182,7 @@ void PremiereApplication::createViewports()
     //Grace a ce Viewport nouvellement cree, nous allons faire coincider
     //le rapport largeur / hauteur de notre camera avec celui du
     //Viewport, pour avoir une image non deformee
-    mCamera->setAspectRatio(Real(vue->getActualWidth()) /  Real(vue->getActualHeight()));
+    mCamera->setAspectRatio(Real(vue->getActualWidth()) / Real(vue->getActualHeight()));
 
     //on definit ici la couleur de fond
     vue->setBackgroundColour(ColourValue(0.0, 0.0, 1.0));     //bleu

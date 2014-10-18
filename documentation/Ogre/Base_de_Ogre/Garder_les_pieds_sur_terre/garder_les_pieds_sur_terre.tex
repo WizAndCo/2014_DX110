@@ -1,8 +1,6 @@
 
 \chapter{Gardez les pieds sur Terre}
-Sans outil particulier, cr\'eer un terrain pourrait relever d'un travail de longue haleine si l'on devait cr\'eer le mesh dans les moindres d\'etails pour l'ins\'erer ensuite \`a la sc\`ene. La gestion d'une telle entit\'e serait aussi relativement complexe, puisqu'il doit pouvoir interagir avec tous les objets susceptibles de se d\'eplacer dans la sc\`ene.
-
-Heureusement, plut\^ot que de placer notre terrain comme une simple entit\'e dans la sc\`ene, Ogre propose de passer par une classe Terrain qui, comme son nom l'indique si bien, permet de g\'erer des terrains dans la sc\`ene.
+Plut\^ot que de placer notre terrain comme une simple entit\'e dans la sc\`ene (ce qui serait tr\`es laborieux), Ogre propose de passer par une classe Terrain pour la gestion des terrains dans la sc\`ene.
 
 Le terrain n'est g\'en\'eralement pas seul et le ciel joue un r\^ole important pour le r\'ealisme de la sc\`ene. L\`a encore, quelques outils bienvenus offrent diff\'erentes solutions pour obtenir un r\'esultat convaincant.
 
@@ -15,23 +13,38 @@ Le terrain n'est g\'en\'eralement pas seul et le ciel joue un r\^ole important p
 
 Avant de commencer, il va falloir modifier un peu notre projet avec de nouvelles d\'ependances pour que les terrains soient utilisables.
 
-Dans l'\'editeur de lien, ajoutez le fichier librairie OgreTerrain.lib (ou bien OgreTerrain\_d.lib si vous compilez en debug).
-
-Il faut maintenant ajouter un fichier en-t\^ete dans notre classe :
+Il faut ajouter un fichier en-t\^ete dans notre classe :
 
 \begin{lstlisting}[caption={Ajout du fichier d'ent\^ete pour la gestion des terrains}]
 #include <Ogre/Terrain/OgreTerrain.h>
 \end{lstlisting}
 
-Enfin, si vous ne les avez pas d\'ej\`a plac\'ees dans le r\'epertoire de votre ex\'ecutable, copiez ces 2 DLL dans le dossier correspondant \`a votre configuration (les DLL de debug se terminent aussi par ''\_d'') :
-
+Pour la prise en compte des lib
 \begin{itemize}
 \item OgreTerrain.dll
 \item OgrePaging.dll
 \end{itemize}
 
+il va nous ajouter les lignes suivantes au fichier CMakeList.txt:
+
+\begin{lstlisting}[caption={Modification de CMakeLists.txt pour l'inclusion des lib Terrain et Paging}]
+#Inclusion de la lib libOgreTerrain.so
+if (OGRE_Terrain_FOUND)
+  set(OGRE_LIBRARIES ${OGRE_LIBRARIES} ${OGRE_Terrain_LIBRARIES})
+  message(STATUS "Found OGRE_Terrain: ${OGRE_Terrain_LIBRARIES}")
+else (OGRE_Terrain_FOUND)
+  message(SEND_ERROR "OgreTerrain Library not found.")
+endif(OGRE_Terrain_FOUND)
 
 
+#Inclusion de la lib libOgrePaging.so
+if (OGRE_Paging_FOUND)
+  set(OGRE_LIBRARIES ${OGRE_LIBRARIES} ${OGRE_Paging_LIBRARIES})
+  message(STATUS "Found OGRE_Paging: ${OGRE_Paging_LIBRARIES}")
+else (OGRE_Paging_FOUND)
+  message(SEND_ERROR "OgrePaging Library not found.")
+endif(OGRE_Paging_FOUND)
+\end{lstlisting}
 
 \subsection{Quelques param\`etres \`a r\'egler}
 
@@ -64,7 +77,7 @@ mCamera->setPosition(0, 500, 0);
 Il est aussi possible de r\'egler la distance de vue \`a l'infini\index{cam\'era!distance de vue \`a l'infini}, en mettant 0 comme param\`etre. Cependant, cela d\'epend de votre machine, il faut donc v\'erifier si vous pouvez vous le permettre avant de l'appliquer.
 
 \begin{lstlisting}[caption={V\'erification et r\'eglages de vue \`a l'infini}]
-if (mRoot->getRenderSystem()->getCapabilities()->hasCapability(Ogre::RSC\_INFINITE\_FAR\_PLANE))
+if (mRoot->getRenderSystem()->getCapabilities()->hasCapability(Ogre::RSC_INFINITE_FAR_PLANE))
     mCamera->setFarClipDistance(0);
 \end{lstlisting}
 
@@ -149,7 +162,11 @@ Une heightmaps\index{heightmaps} est une image qui contient des informations de 
 Cette m\'ethode a le principal avantage d'\^etre tr\`es l\'eg\`ere en terme de stockage, puisque l'on a simplement une image \`a la place d'un mod\`ele 3D complet qui prendrait beaucoup plus d'espace \`a stocker.
 
 Voici l'image que nous allons utiliser pour notre terrain :
-Image utilisateur
+\begin{figure}[hbtp]
+\caption{Terrain.png}
+\centering
+\includegraphics[width=4cm]{Ogre/Base_de_Ogre/Garder_les_pieds_sur_terre/images/terrain.png} %l'image est retaill\'ee pour avoir une largeur de 10cm
+\end{figure}
 
 Comme vous le voyez c'est une simple image en noir et blanc, et pourtant cela suffit amplement !
 
@@ -159,7 +176,7 @@ En r\'ealit\'e, chaque pixel poss\`ede trois valeurs, correspondant \`a la quant
 
 Lors de la cr\'eation d'un fichier heightmap, on fait en sorte que le point le plus haut de notre carte soit blanc et que le point le plus bas soit noir, afin d'utiliser toute la plage de valeurs disponibles dans la carte et \'eviter les d\'enivellations peu naturelles.
 
-Pour charger un fichier heightmap, on passe par un objet Image qui va chercher le nom du fichier que vous voulez dans les ressources d\'ej\`a charg\'ees. J'utilise le fichier terrain.png, que vous pouvez trouver dans ''OgreSDK.media.materials.textures''.\footnote{Comment ecrire un chemin avec des Slashs?}
+Pour charger un fichier heightmap, on passe par un objet Image qui va chercher le nom du fichier que vous voulez dans les ressources d\'ej\`a charg\'ees. J'utilise le fichier terrain.png, que vous pouvez trouver dans ''media/materials/textures''.
 
 \begin{lstlisting}[caption={Chargement du fichier heightmap}]
 Ogre::Image img;
@@ -481,9 +498,6 @@ mTerrain->freeTemporaryResources();
 Vous pouvez maintenant ex\'ecuter l'application ! Profitez-en pour v\'erifier en vous approchant du sol que l'on distingue bien l'herbe et par-dessus la terre.
 Image utilisateur
 
-
-D'accord, la forme n'est pas terrible. Mais le principe y est, c'est un d\'ebut.
-
 On va tout de suite essayer de faire quelque chose de plus esth\'etique.
 
 Pour cela, maintenant que vous avez saisi les grandes \'etapes, je vous propose un mini-TP pour vous entra\^iner.
@@ -504,7 +518,7 @@ Pour cela, maintenant que vous avez saisi les grandes \'etapes, je vous propose 
 Une image vaut s\^urement mieux qu'un long discours, voici donc ce que vous allez devoir obtenir :
 Image utilisateur
 
-L'id\'ee est de texturer le terrain en fonction de l'altitude. Si l'on est en dessous d'un certain seuil, il n'y a que de la terre qui appara\^t ; au-dessus, on a de l'herbe.
+L'id\'ee est de texturer le terrain en fonction de l'altitude. Si l'on est en dessous d'un certain seuil, il n'y a que de la terre qui appara\^it ; au-dessus, on a de l'herbe.
 
 
 
@@ -580,7 +594,280 @@ Vous pouvez aussi bien s\^ur r\'ecup\'erer la Blend map num\'ero 2 plus haut pou
 
 
 
+
+
+
+\subsubsection{Code}
+
+Ci-dessous le trouve le code de la metohde createTerrain et le resultat obtenu:
+
+\begin{lstlisting}[caption={createTerrain}]
+void PremiereApplication::createTerrain()
+{    
+    Ogre::Vector3 lightdir(0.55f, -0.3f, 0.75f);
+    
+    mLight = mSceneMgr->createLight("terrainLight");
+    mLight->setType(Light::LT_DIRECTIONAL);
+    mLight->setDirection(lightdir);
+    mLight->setDiffuseColour(Ogre::ColourValue::White);
+    mLight->setSpecularColour(Ogre::ColourValue(0.4f, 0.4f, 0.4f)); 
+    
+    mGlobals = OGRE_NEW Ogre::TerrainGlobalOptions();
+    mGlobals->setMaxPixelError(8);                                      /**<spécifie la précision de rendu (en nbr de pixel) du terrain*/    
+    
+    //application des réglages de lumière aux options globales
+    mGlobals->setLightMapDirection(mLight->getDerivedDirection());
+    mGlobals->setCompositeMapDistance(3000);
+    mGlobals->setCompositeMapAmbient(mSceneMgr->getAmbientLight());
+    mGlobals->setCompositeMapDiffuse(mLight->getDiffuseColour());    
+    
+    mTerrain = OGRE_NEW Ogre::Terrain(mSceneMgr);/**<Création du terrain*/
+    
+    Ogre::Image img;
+    img.load("terrain.png", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);/**<Chargement de l'image Heighmaps contenant les infos pour le relief*/
+    
+    ///Mise en place des propriétés générales du terrain
+    Ogre::Terrain::ImportData imp;/**<Création de l'objet qui contiendra toutes les infos pour le terrain*/
+    imp.inputImage = &img;/**<recuperation de l image*/
+    imp.terrainSize = img.getWidth();/**<recuperation de la taille de l image (les terrains sont carres, l'image doit donc etre carree)*/
+
+    imp.worldSize = 8000;/**<taille du terrain en unites de la scene (plus ce nbre est grande, plus l'image est grande)*/
+    imp.inputScale = 600;/**<echelle adoptee pour l altitude du terrain (difference entre un pt a l'altitude 0 (pt en blanc ds terrain.png) et un point à l'altitude max (pt en noir))*/
+    imp.minBatchSize = 33;/**<taille min du batch pour le terrain*/
+    imp.maxBatchSize = 65;/**<taille max du batch pour le terrain*/
+    
+    ///Mise en place des textures
+    imp.layerList.resize(1);/**<donne la taille de la liste des calques*/
+    imp.layerList[0].worldSize = 100;/**<donne la taille de la texture ds le monde (plus le nbre est gd plus la texture est zoomée)*/
+    ///insertion de textures dans notre calque
+    imp.layerList[0].textureNames.push_back("grass_green-01_diffusespecular.dds");/**>contient les couleurs, les motifs du materiau*/
+    imp.layerList[0].textureNames.push_back("grass_green-01_normalheight.dds");/**<contient des infos sur le relief du materiau*/
+    
+    ///Filtrage anisotropique (affecte toutes les textures)
+    Ogre::MaterialManager::getSingleton().setDefaultTextureFiltering(Ogre::TFO_ANISOTROPIC);
+    Ogre::MaterialManager::getSingleton().setDefaultAnisotropy(8);
+    
+    ///Rajout de calques dans notre liste
+    imp.layerList.resize(3);
+    imp.layerList[0].worldSize = 100;
+    imp.layerList[0].textureNames.push_back("grass_green-01_diffusespecular.dds");
+    imp.layerList[0].textureNames.push_back("grass_green-01_normalheight.dds");
+    imp.layerList[1].worldSize = 30;
+    imp.layerList[1].textureNames.push_back("growth_weirdfungus-03_diffusespecular.dds");
+    imp.layerList[1].textureNames.push_back("growth_weirdfungus-03_normalheight.dds");
+    imp.layerList[2].worldSize = 200;
+    imp.layerList[2].textureNames.push_back("dirt_grayrocky_diffusespecular.dds");
+    imp.layerList[2].textureNames.push_back("dirt_grayrocky_normalheight.dds");
+    
+    mTerrain->prepare(imp);/**<on fournit toutes les informations necessaires au terrain*/
+    mTerrain->load();/**<chragement du terrain*/    
+    
+    ///recuperation du blend map pour le premier terrain
+    Ogre::TerrainLayerBlendMap* blendMap2 = mTerrain->getLayerBlendMap(2);/**<recuperation du blend map*/
+    
+    ///plaquage de la texture..
+    float* pBlend2 = blendMap2->getBlendPointer();
+    ///..en fonction de l'altitude
+    for (Ogre::uint16 y = 0; y < mTerrain->getLayerBlendMapSize(); ++y)
+    {
+        for (Ogre::uint16 x = 0; x < mTerrain->getLayerBlendMapSize(); ++x)
+        {
+            Ogre::Real terrainX, terrainY;
+            
+            blendMap2->convertImageToTerrainSpace(x, y, &terrainX, &terrainY);
+            Ogre::Real height = mTerrain->getHeightAtTerrainPosition(terrainX, terrainY);
+            
+            //en general l'herbe se trouve en basse altitude
+            if(height > 200)
+                *pBlend2 = 1;
+            
+            pBlend2++;
+        }
+    }
+    
+    blendMap2->dirty();/**<precise que les donnees de la blend Map st obsolètes*/
+    blendMap2->update();/**<fait la mise a jour des donnees de la blend map*/ 
+    
+    mTerrain->freeTemporaryResources();/**<liberation de la memoire allouee temporairement*/
+}
+
+\end{lstlisting}
+
+
+
+
+\begin{lstlisting}[caption={PremiereApplication.h}]
+
+using namespace std;
+
+#include <ExampleApplication.h>
+#include <OgreMovableObject.h>
+#include "InputListener.h"
+
+#include <Terrain/OgreTerrain.h>
+
+class PremiereApplication : public ExampleApplication
+{    
+    public:
+        Terrain *mTerrain;                      /**<gèrera les propriétés de notre terrain*/
+        Ogre::TerrainGlobalOptions *mGlobals;   /**<objet obligatoire pr la gestion des terrains, définira les propriétés générales pour le terrain (ex: éclairage)*/
+        Light *mLight;                          /**<contiendra les proriétés de la lumière*/
+        
+        /** Crée la scène avec une tête d'Ogre flottant sur un carré de pelouse
+         */
+        void createScene();
+        
+        /** Crée et place la caméra
+         */
+        void createCamera();
+        
+        /** Crée une seconde vue de la scene
+         */
+        void createViewports();
+
+        /** Gère les entrées 
+         */
+        void createFrameListener();
+        
+        /** Crée une lumière selon le paramètre
+         @param luxType - type de lumière désirée 
+         @param lux - instance de lumière 
+         @return distance to point
+         */
+        //void createLux(std::string luxType, MovableObject *lux);
+        
+        /** Initialise le terrain
+         */
+        void createTerrain();
+};
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+
+
+
+\begin{lstlisting}[caption={CMakeLists.txt}]
+project(helloworld)
+cmake_minimum_required(VERSION 2.6)
+
+set(CMAKE_MODULE_PATH "/usr/share/OGRE/cmake/modules")
+
+set(CMAKE_CXX_FLAGS "-Wall -std=c++11 -g")
+
+# Il s'agit du tutoriel d'exemple, qui utilise quelques fichiers prdfini de Ogre. Il faut indiquer a cmake ou se trouvent les includes en question
+include_directories ("include")
+
+# Bien sur, pour compiler Ogre, il faut le chercher, et dfinir le rpertoire contenant les includes.
+find_package(OGRE REQUIRED)
+include_directories (${OGRE_INCLUDE_DIRS})
+
+if (OGRE_Overlay_FOUND)
+# append OgreOverlay to the end of the OGRE_LIBRARIES variable
+  set(OGRE_LIBRARIES ${OGRE_LIBRARIES} ${OGRE_Overlay_LIBRARIES})
+  message(STATUS "Found OGRE_Terrain: ${OGRE_Overlay_LIBRARIES}")
+else (OGRE_Overlay_FOUND)
+  message(SEND_ERROR "OgreOverlay Library not found.")
+endif(OGRE_Overlay_FOUND)
+
+#Inclusion de la lib libOgreTerrain.so
+if (OGRE_Terrain_FOUND)
+  set(OGRE_LIBRARIES ${OGRE_LIBRARIES} ${OGRE_Terrain_LIBRARIES})
+  message(STATUS "Found OGRE_Terrain: ${OGRE_Terrain_LIBRARIES}")
+else (OGRE_Terrain_FOUND)
+  message(SEND_ERROR "OgreTerrain Library not found.")
+endif(OGRE_Terrain_FOUND)
+
+
+#Inclusion de la lib libOgrePaging.so
+if (OGRE_Paging_FOUND)
+  set(OGRE_LIBRARIES ${OGRE_LIBRARIES} ${OGRE_Paging_LIBRARIES})
+  message(STATUS "Found OGRE_Paging: ${OGRE_Paging_LIBRARIES}")
+else (OGRE_Paging_FOUND)
+  message(SEND_ERROR "OgrePaging Library not found.")
+endif(OGRE_Paging_FOUND)
+
+
+# L'exemple depend aussi de OIS, une lib pour gerer la souris, clavier, joystick...
+find_package(OIS REQUIRED)
+
+# On dfinit les sources qu'on veut compiler
+SET( SOURCES
+  src/InputListener.cpp  
+  src/PremiereApplication.cpp
+  src/main.cpp
+)
+
+# On les compile
+add_executable (
+  premiereapp ${SOURCES}
+)
+
+message(STATUS "OGRE Libraries used to link are ${OGRE_LIBRARIES}")
+
+# Et pour finir, on lie l'executable avec les librairies que find_package nous a gentillement trouve.
+target_link_libraries(premiereapp ${OGRE_LIBRARIES} ${OIS_LIBRARY} -lboost_system)
+
+
+
+set( RESOURCES_FILE
+  media/
+  resources/ogre.cfg
+  resources/plugins.cfg
+  resources/resources.cfg
+)
+
+# do the copying
+foreach( file_i ${RESOURCES_FILE})
+    add_custom_command(
+      TARGET premiereapp
+      POST_BUILD
+      COMMAND cp -R ${CMAKE_SOURCE_DIR}/${file_i} ${CMAKE_BINARY_DIR}
+      COMMENT "copy file ${file_i}"
+      )
+endforeach( file_i )
+
+\end{lstlisting}
+
+
+
+
+
+Et on obtiend:
+\begin{figure}[hbtp]
+\caption{Terrain.png}
+\centering
+\includegraphics[width=8cm]{Ogre/Base_de_Ogre/Garder_les_pieds_sur_terre/images/Differentes_textures_selon_altitude1.png} %l'image est retaill\'ee pour avoir une largeur de 10cm
+\end{figure}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 \subsection{Pour aller plus loin}
+
 
 Sur le m\^eme principe, nous allons voir comment appliquer deux textures diff\'erentes sur une petite largeur, \`a une altitude donn\'ee.
 
@@ -674,6 +961,65 @@ blendMap2->dirty();
 blendMap1->update();
 blendMap2->update();
 \end{lstlisting}
+
+
+
+
+\subsubsection{Code}
+Les seules choses \`a changer sont le plaquage de texture:
+
+
+\begin{lstlisting}[caption={Plaquage de textures sur zone}]
+...
+    ///pour definir des bandes d'altitude avec une texture différente
+    Ogre::Real minHeight1 = 70;
+    Ogre::Real fadeDist1 = 40;
+    Ogre::Real minHeight2 = 70;
+    Ogre::Real fadeDist2 = 15;
+    
+    
+    ///recuperation du blend map pour le premier terrain
+    Ogre::TerrainLayerBlendMap* blendMap1 = mTerrain->getLayerBlendMap(1);/**<recuperation du blend map*/
+    Ogre::TerrainLayerBlendMap* blendMap2 = mTerrain->getLayerBlendMap(2);/**<recuperation du blend map*/
+    
+    ///plaquage de la texture..
+    float* pBlend1 = blendMap1->getBlendPointer();
+    float* pBlend2 = blendMap2->getBlendPointer();
+    ///..en fonction de l'altitude
+    for (Ogre::uint16 y = 0; y < mTerrain->getLayerBlendMapSize(); ++y)
+    {
+        for (Ogre::uint16 x = 0; x < mTerrain->getLayerBlendMapSize(); ++x)
+        {
+            Ogre::Real terrainX, terrainY, transparence;
+            
+            blendMap1->convertImageToTerrainSpace(x, y, &terrainX, &terrainY);
+            Ogre::Real height = mTerrain->getHeightAtTerrainPosition(terrainX, terrainY);
+            
+            transparence = (height - minHeight1) / fadeDist1;
+            transparence = Ogre::Math::Clamp(transparence, (Ogre::Real)0, (Ogre::Real)1);
+            *pBlend1++ = transparence * 255;
+            
+            transparence = (height - minHeight2) / fadeDist2;
+            transparence = Ogre::Math::Clamp(transparence, (Ogre::Real)0, (Ogre::Real)1);
+            *pBlend2++ = transparence * 255;
+        }
+    }
+    
+    blendMap1->dirty();/**<precise que les donnees de la blend Map st obsolètes*/
+    blendMap1->update();/**<fait la mise a jour des donnees de la blend map*/
+    blendMap2->dirty();/**<precise que les donnees de la blend Map st obsolètes*/
+    blendMap2->update();/**<fait la mise a jour des donnees de la blend map*/ 
+...
+\end{lstlisting}
+
+
+
+Et on obtiend:
+\begin{figure}[hbtp]
+\caption{Terrain.png}
+\centering
+\includegraphics[width=8cm]{Ogre/Base_de_Ogre/Garder_les_pieds_sur_terre/images/Differentes_textures_selon_altitude2.png} %l'image est retaill\'ee pour avoir une largeur de 10cm
+\end{figure}
 
 
 

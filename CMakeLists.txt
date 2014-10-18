@@ -26,6 +26,26 @@ else (OGRE_Overlay_FOUND)
 endif(OGRE_Overlay_FOUND)
 
 
+#Inclusion de la lib libOgreTerrain.so
+if (OGRE_Terrain_FOUND)
+  set(OGRE_LIBRARIES ${OGRE_LIBRARIES} ${OGRE_Terrain_LIBRARIES})
+  message(STATUS "Found OGRE_Terrain: ${OGRE_Terrain_LIBRARIES}")
+else (OGRE_Terrain_FOUND)
+  message(SEND_ERROR "OgreTerrain Library not found.")
+endif(OGRE_Terrain_FOUND)
+
+
+#Inclusion de la lib libOgrePaging.so
+if (OGRE_Paging_FOUND)
+  set(OGRE_LIBRARIES ${OGRE_LIBRARIES} ${OGRE_Paging_LIBRARIES})
+  message(STATUS "Found OGRE_Paging: ${OGRE_Paging_LIBRARIES}")
+else (OGRE_Paging_FOUND)
+  message(SEND_ERROR "OgrePaging Library not found.")
+endif(OGRE_Paging_FOUND)
+
+
+
+
 # L'exemple dpend aussi de OIS, une lib pour grer la souris, clavier, joystick...
 find_package(OIS REQUIRED)
 
