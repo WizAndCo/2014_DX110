@@ -1173,7 +1173,7 @@ Pour terminer, comme avec un terrain seul, on lib\`ere la m\'emoire utilis\'ee p
 mTerrainGroup->freeTemporaryResources();
 \end{lstlisting}
 
-Votre sc\`ene doit maintenant avoir une surface plus grande que la première fois (on a maintenant quatre terrains). Vous pouvez encore augmenter le nombre de terrains, mais attention, le temps de chargement augmente rapidement !
+Votre sc\`ene doit maintenant avoir une surface plus grande que la premi\`ere fois (on a maintenant quatre terrains). Vous pouvez encore augmenter le nombre de terrains, mais attention, le temps de chargement augmente rapidement !
 
 
 
@@ -1189,7 +1189,7 @@ En regardant la cr\'eation du groupe de terrains, vous voyez que l'on a d\'efini
 mTerrainGroup->setFilenameConvention(Ogre::String("TerrainDuZero"), Ogre::String("dat"));
 \end{lstlisting}
 
-Cette ligne sert lors de la sauvegarde de fichiers de terrain : ceux-ci seront nomm\'es en commençant par « TerrainDuZero » suivi d'un nombre permettant d'identifier le terrain, puis de l'extension de fichier « dat ».
+Cette ligne sert lors de la sauvegarde de fichiers de terrain : ceux-ci seront nomm\'es en commen\c{c}ant par "TerrainDuZero" suivi d'un nombre permettant d'identifier le terrain, puis de l'extension de fichier "dat".
 
 Pour utiliser la sauvegarde des terrains, nous allons ajouter un attribut mTerrainCreated \`a la classe PremiereApplication qui permettra de savoir si l'on a g\'en\'er\'e le terrain \`a partir d'une image ou bien si l'on a lu un fichier terrain. Dans le premier cas, on saura qu'\`a la fin de la m\'ethode createTerrain() il faut penser \`a sauvegarder les fichiers de terrain pour le prochain lancement de l'application.
 
