@@ -1,0 +1,164 @@
+
+%!!! 3OGRE3 n est pas centre dans le titre qui suit
+\chapter{Installation, Premier programme}
+
+
+\section{Premier pas}
+\subsection{Sources}
+J'ai d'abord voulu suivre le tutoriel du site du z\'ero
+\url{http://fr.openclassrooms.com/informatique/cours/decouvrez-ogre-3d/}\newline
+
+Mais ce tutoriel du site des zéros semble plus axé visual studio, par contre un lien est donné pour la compilation de projets sous Ubuntu \url{http://geenux.wordpress.com/2010/03/18/installation-de-ogre-1-7-et-compilation-avec-cmake-sous-ubuntu/}
+
+
+\subsection{Installation}
+Installation avec synaptic des packages suivants:
+\begin{enumerate}
+\item libogre-dev
+\item ogre-samples
+\item ogre-samples-data
+\item libogre-1.7.4
+\item libois-1.3.0
+\item libois-dev 
+\end{enumerate}
+
+
+
+
+
+
+\section{Premiere compilation}
+
+\subsection{Premier programme}
+
+\begin{itemize}
+\item Création d'un répertoire contenant les fichiers suivants:
+
+\begin{lstlisting}
+Hraesvelg:~/Documents/workspace/3D/OGRE/ExampleApplication$ ls -l
+total 24
+-rw-rw-r-- 1 olivier olivier 1109 fvr. 23 12:16 CMakeLists.txt
+-rw-rw-r-- 1 olivier olivier  844 fvr. 23 12:02 helloworld.cpp
+-rw-rw-r-- 1 olivier olivier 4894 fvr. 23 12:18 Makefile
+-rw-r--r-- 1 olivier olivier  446 fvr. 23 12:20 plugins.cfg
+-rw-r--r-- 1 olivier olivier 1391 fvr. 23 12:20 resources.cfg
+\end{lstlisting}
+
+\item helloworld.cpp:
+
+\begin{lstlisting}
+#include ''ExampleApplication.h''
+ 
+class TutorialApplication: public ExampleApplication
+{
+protected:
+public:
+    TutorialApplication()
+    {
+    }
+ 
+    ~TutorialApplication()
+    {
+    }
+protected:
+    void createscene(void)
+    {
+    }
+};
+ 
+#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
+#define WIN32_LEAN_AND_MEAN
+#include ''windows.h''
+ 
+INT WINAPI WinMain( HINSTANCE hInst, HINSTANCE, LPSTR strCmdLine, INT )
+#else
+int main(int argc, char **argv)
+#endif
+{
+    // Create application object
+    TutorialApplication app;
+ 
+    try {
+        app.go();
+    } catch( Exception& e ) {
+#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
+        MessageBox( NULL, e.what(), ''An exception has occurred!'', MB_OK | MB_ICONERROR | MB_TASKMODAL);
+#else
+        fprintf(stderr, ''An exception has occurred: %s\n'',
+                e.what());
+#endif
+    }
+ 
+    return 0;
+}
+\end{lstlisting}
+
+
+\item CMakeLists.txt est une copie modifiée du CMakeLists.txt donnée dans le tutoriel de compilation sous Ubuntu. Les lignes commencant par \# \~ sont les lignes originales que j'ai du modifier.
+\end{itemize}
+
+
+
+\begin{lstlisting}
+project(helloworld)
+cmake_minimum_required(VERSION 2.6)
+
+\# \~ set(CMAKE_MODULE_PATH ''/usr/lib/OGRE/cmake/'')
+set(CMAKE_MODULE_PATH ''/usr/share/OGRE/cmake/modules'')
+
+#set(CMAKE_CXX_FLAGS ''-Wall -W -Werror -ansi -pedantic -g'')
+
+# Il s sagit du tutoriel d exemple, qui utilise quelques fichiers predefini de Ogre. Il faut indiquer a cmake o\'{u} se trouvent les includes en question
+# \~ include_directories (''/usr/share/OGRE/Samples/Common/include/'')
+include_directories (''/usr/share/OGRE-1.7.4/Samples/Common/include/'')
+
+# Bien sur, pour compiler Ogre, il faut le chercher, et definir le repertoire contenant les includes.
+find_package(OGRE REQUIRED)
+include_directories (${OGRE_INCLUDE_DIRS})
+
+# L'exemple depend aussi de OIS, une lib pour gerer la souris, clavier, joystick...
+find_package(OIS REQUIRED)
+
+# On definit les sources qu'on veut compiler
+SET(SOURCES
+helloworld.cpp)
+
+# On les compile
+add_executable (
+helloworld ${SOURCES}
+)
+
+# Et pour finir, on lie l'executable avec les librairies que find_package nous a gentillement trouve.
+target_link_libraries(helloworld ${OGRE_LIBRARY} ${OIS_LIBRARY})
+%\end{lstlisting}
+
+
+plugins.cfg et resources.cfg sont copiés de /usr/share/OGRE-1.7.4
+
+\subsection{Compilation}
+les commandes \`{a} faire sont:
+\begin{itemize}
+\item cmake.
+\item make
+\item./helloworld
+\end{itemize}
+
+\section{Premiere compilation sous CodeBlocks}
+A tenter!!!!\newline
+\url{http://fr.openclassrooms.com/informatique/cours/decouvrez-ogre-3d/configuration-d-un-projet-3}
+
+\section{Premiere compilation sous kDevelop}
+J'ai suivi\newline
+\url{http://www.ogre3d.org/tikiwiki/tiki-index.php?page=Setting+Up+An+Application+-+KDevelop+-+Linux}.\newline
+Je copie dans le répertoire ogretest le répertoire d'exemple Sample\_Water. Le processus foire.
+
+
+
+
+\section{Code de base}
+\subsection{Source}
+\url{http://fr.openclassrooms.com/informatique/cours/decouvrez-ogre-3d/le-code-de-base-1}
+
+Ce code de base est en fait le même que celui fait dans le chapitre Premiere Compilation, sauf qu'alors on avait que un seul fichier cpp, on rajoute i\c{c}i un fichier.h qui est inclus dans le fichier main.cpp.
+
+

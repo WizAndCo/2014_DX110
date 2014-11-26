@@ -1,0 +1,415 @@
+
+
+\chapter{La lumières}
+
+
+
+\section{Les lumières}
+
+
+\subsection{Quelques fonctions de base}
+
+La lumière est nécessaire pour pouvoir voir quelque chose dans une scène. Comment a-t-on donc pu voir nos objets depuis le début de ce cours?
+
+Il existe une propriété du scène Manager qui permet de définir une lumière ambiante. Cela permet d'éclairer la scène de façon homogène avec une certaine luminosité. Par défaut, on a un éclairage à la lumière blanche qui permet de voir ce qui se passe dans la scène. La ligne suivante peut être ajoutée au début de la méthode createscene() pour appliquer une lumière ambiante noire nous pourrons ainsi définir des lumières et voir leur influence.
+
+\begin{lstlisting}
+msceneMgr->setAmbientLight(ColourValue(0.0, 0.0, 0.0));
+\end{lstlisting}
+
+
+
+La classe ColourValue permet de définir une couleur en entrant les quantités respectives de rouge, de vert puis de bleu dans un nombre compris entre 0 et 1. Il est aussi possible de définir une composante alpha (la transparence), utile pour des textures par exemple.
+
+Une lumière est un objet de scène, on passe donc par le scène manager pour créer une lumière:
+\begin{lstlisting}
+Light *light = msceneMgr->createLight(''lumiere1'');
+\end{lstlisting}
+
+Par défaut, la lumière créée est de type ponctuelle. Vous avez plus de détails sur les différents types de lumière un peu plus bas.
+
+Mettons tout de suite en place quelques paramètres de base: la couleur émise (diffuse et spéculaire, que nous détaillerons dans le chapitre sur les matériaux) et la position.
+\begin{lstlisting}
+light->setDiffuseColour(1.0, 0.7, 1.0);
+light->setSpecularColour(1.0, 0.7, 1.0);
+light->setPosition(-100, 200, 100);
+\end{lstlisting}
+
+
+
+
+Les deux premiers paramètres sont les couleurs diffuses et spéculaires, au format RVB, avec des valeurs qui doivent être comprises entre 0 et 1.
+
+La couleur diffuse est la couleur sous laquelle vont apparaître les objets non brillants, et la couleur spéculaire est un paramètre supplémentaire pour les matériaux réfléchissants comme le métal ou le verre. Pour une lumière, on met généralement la même couleur pour ces deux paramètres.
+
+Vient ensuite la méthode setPosition(), qui ne devrait pas vous poser de problèmes, et enfin une dernière ligne \footnote{quelle dernière ligne ???} permettant d'amplifier ou de diminuer l'intensité lumineuse. Par défaut, ce coefficient est de 1, mais pour notre scène j'ai voulu l'augmenter pour qu'on y voie un peu plus clair: n'hésitez pas à jouer un peu avec pour faire des essais.
+
+Enfin, sachez qu'il est possible d'attacher une lumière à un noeud de scène. Dans ce cas, la méthode Light::setPosition() définit la position relative de la lumière par rapport au noeud.
+\begin{lstlisting}
+	node->attachObject(light);
+\end{lstlisting}
+
+
+Vous pouvez donc facilement placer une lumière à la position d'un mesh censé émettre de la lumière - par exemple les phares d'une voiture - et les déplacer en même temps grâce à une seule commande vers le noeud de scène!
+
+
+
+
+
+\subsection{Les types de lumières}
+
+Ogre peut gérer différents types de lumières selon l'effet désiré. Ils sont au nombre de 3:
+
+\begin{itemize}
+\item la lumière ponctuelle: cette lumière émet dans toutes les directions à partir de sa position;
+\item la lumière directionnelle: une lumière dont les rayons vont dans une direction unique et qui n'a pas de position. C'est le genre de lumière qui permet de reproduire l'éclairage du soleil par exemple;
+\item le projecteur ou spot: c'est une lumière qui émet un cône lumineux à partir de sa position, à la façon d'une lampe-torche.
+\end{itemize}
+    
+
+
+
+
+\subsection{Lumière ponctuelle}
+C'est le type de lumière créé par défaut que l'on a vu plus haut. Pour le modifier manuellement, il faut utiliser le type LT\_POINT.
+
+\begin{lstlisting}
+	light->setType(Light::LT_POINT);
+\end{lstlisting}
+
+
+Avec ce type de lumière, il existe une méthode nous permettant aussi de limiter la portée de notre éclairage. Voici le prototype:
+\begin{lstlisting}
+Light::setAttenuation( Real range, Real constant, Real linear, Real quadratic )
+\end{lstlisting}
+
+
+
+C'est plus délicat car les paramètres doivent être choisis avec soin. 
+\begin{itemize}
+\item Le premier est la distance caractéristique d'atténuation, c'est-à-dire la distance à partir de laquelle la luminosité diminue. 
+\item constant est une constante d'atténuation comprise entre 0 et 1. Plus elle est proche de 0, et plus le passage de la lumière à l'ombre est brutal.
+\item linear et quadratic sont les paramètres de la courbe d'atténuation, et doivent être assez faibles, sinon la lumière s'atténue trop rapidement.
+\end{itemize}
+	
+
+
+Ça ne marche pas! L'ogre est bien éclairé mais le sol reste désespérément noir!
+
+L'atténuation ajoute une caractéristique un peu différente pour la gestion de la lumière. En effet, l'éclairage des surfaces est calculé en fonction des vertices situés dans la zone d'éclairage. Lorsqu'un vertice est dans la zone d'éclairage du spot, la surface autour de lui est éclairée, sinon elle est dans l'ombre. Ogre se charge ensuite de faire les dégradés entre les vertices plus ou moins éclairés.
+
+Mais ici, notre plan n'est constitué que de quatre vertices (les coins), dont aucun n'est éclairé par le spot. Le sol n'est donc pas éclairé.
+
+Pour régler ça, il suffit de modifier notre sol pour qu'il possède plus de vertices. Retrouvez la définition du plan et modifiez les paramètres de découpage pour obtenir 10 segments en largeur et en longueur (les deux paramètres avant le true).
+
+\begin{lstlisting}
+Plane plan(Vector3::UNIT_Y, 0);
+MeshManager::getSingleton().createPlane(''sol'', ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, plan, 500, 500, 10, 10, true, 1, 1, 1, Vector3::UNIT_Z);
+\end{lstlisting}
+
+
+
+Notez que plus il y aura de vertices sur le modèle, plus ce sera précis, mais ce sera un peu plus coûteux en ressources.
+
+
+
+
+\subsection{Lumière directionnelle}
+
+Étant donné que cette lumière est de type ''soleil'' et qu'elle émet à l'infini, il n'est pas utile de renseigner sa position. En revanche, la méthode setDirection() permet de définir le vecteur directeur des rayons lumineux.
+
+\begin{lstlisting}
+light->setType(Light::LT_DIRECTIONAL);
+light->setDirection(10.0, -20.0, -5);
+\end{lstlisting}
+
+
+
+
+
+
+\subsection{Projecteur}
+
+Le projecteur permet généralement de simuler un éclairage artificiel en proposant une lumière directionnelle définie dans un cône central et un cône extérieur, avec deux intensités différentes. Le cône central définit une lumière plus forte que le cône extérieur, où la lumière est quelque peu atténuée. Ces deux cônes sont définis par leur angle d'ouverture, ainsi que par un falloff, c'est-à-dire un coefficient indiquant si la transition entre les deux cônes doit être plus ou moins rapide:
+\begin{lstlisting}
+light->setType(Light::LT_SPOTLIGHT);
+light->setPosition(0, 150, -100);
+light->setDirection(0, -1, 1);
+light->setSpotlightRange(Degree(30), Degree(60), 1.0);
+\end{lstlisting}
+
+
+Notez que l'éclairage du spot obéit aux mêmes règles que pour l'atténuation d'une lumière ponctuelle: il faut que les vertices soient éclairés pour que l'éclairage soit visible.
+
+
+De même que pour les lumières ponctuelles, vous pouvez ajouter une portée limitée à votre projecteur avec la méthode setAttenuation().
+
+
+
+
+
+
+\section{Les ombres}
+
+
+\subsection{Activer les ombres}
+
+Tout d'abord, on doit paramétrer nos lumières et nos entités pour projeter (ou non) des ombres.
+Que ce soit pour les lumières ou les entités, on utilise la même méthode pour choisir d'activer ou non la projection:
+
+\begin{lstlisting}
+light->setCastShadows(true);
+head->setCastShadows(true);
+\end{lstlisting}
+
+
+Si vous voulez qu'une entité ne projette aucune ombre, il suffit de mettre le paramètre à false. De même si vous voulez qu'une lumière ne projette aucune ombre pour les entités (pour une lumière d'ambiance ou d'ajustement, par exemple).
+
+N'oubliez pas de désactiver la projection d'ombres pour le sol. D'une part parce que celui-ci n'a pas besoin de projeter d'ombres, d'autre part parce que certaines techniques nécessitent d'avoir ce paramètre désactivé pour avoir une ombre sur le mesh.
+
+Avant de pouvoir afficher les ombres, il faut les activer. Cela se fait dans le scène Manager, par exemple:
+
+\begin{lstlisting}
+msceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
+\end{lstlisting}
+
+
+
+On définit ici la technique de rendu qui sera utilisée pour les ombres dans la scène (voir ci-dessous).
+
+
+
+
+\subsection{Les différents types d'ombres}
+
+Ogre permet de générer différents types d'ombres selon les besoins, qui dépendent généralement des modèles concernés par la projection d'ombres.
+
+Il existe deux techniques pour la génération d'ombres:
+\begin{itemize}
+\item le type ''Stencil'' (pochoir en anglais)
+\item le type ''Texture''
+\end{itemize}
+
+Les ombres de type Stencil sont très précises dans les contours et permettent une très bonne projection d'ombre lorsque l'on y regarde de près. En revanche, elles sont assez coûteuses en ressources, notamment lorsque les mesh sont animés. Enfin, elles ne prennent pas du tout en compte la transparence des textures, un cube de texture transparente projettera donc une ombre si ce paramètre est activé.
+Les ombres de type Texture permettent de gérer la transparence des textures et sont moins coûteuses en ressources, mais leur précision est plus faible.
+
+Enfin, chacune de ces deux catégories est composée de deux techniques, l'une dite modulative, l'autre additive. On obtient ainsi quatre techniques possibles:
+\begin{itemize}
+\item SHADOWTYPE\_TEXTURE\_MODULATIVE
+\item SHADOWTYPE\_TEXTURE\_ADDITIVE
+\item SHADOWTYPE\_STENCIL\_MODULATIVE
+\item SHADOWTYPE\_STENCIL\_ADDITIVE
+\end{itemize}
+
+
+Notez que dans chacun des cas, la technique additive est la meilleure, notamment pour une approche de type Stencil. La différence pour les techniques de type Texture est minime; en revanche, la technique Stencil additive permet d'obtenir des ombres plus ou moins sombres en fonction de l'éclairage grâce à des passes successives, tandis que la méthode Stencil modulative ne fait que projeter le modèle au sol une seule fois pour chaque lumière.
+
+C'est donc dans le scène Manager que l'on s'occupe de déterminer la technique de rendu des ombres. Par défaut, celles-ci ne sont pas rendues.
+\begin{lstlisting}
+msceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_MODULATIVE);
+\end{lstlisting}
+
+
+Il n'est possible d'avoir qu'une seule technique enregistrée à la fois dans un scène Manager. Il n'est pas possible de choisir les types d'ombres à générer pour chaque lumière de la scène. Il faut donc faire un choix pour l'ensemble de vos ombres.
+
+Ci-dessous, l'approche basée sur la texture, peu précise mais peu coûteuse en ressources:
+
+Image utilisateur \url{http://fr.openclassrooms.com/informatique/cours/decouvrez-ogre-3d/les-ombres-1}
+
+
+
+\subsection{Code}
+Dans le code ci-dessous a été ajoutée une méthode pour la création d'une lumière et les ombres. Les objets qui projettent des ombres doivent être activé, ici seule la tête de ogre et la lumière elle-même projettent des ombres.
+
+\subsubsection{PremiereApplication.h}
+
+
+
+\begin{lstlisting}[caption={PremiereApplication.h: ajout d'une méthode pour la gestion de lumière et des ombres}]
+using namespace std;
+
+#include <ExampleApplication.h>
+#include <OgreMovableObject.h>
+
+
+class PremiereApplication : public ExampleApplication
+{
+    public:
+        void createScene();
+        void createCamera();
+        void createViewports();
+
+        void createLux(std::string, MovableObject *);
+};
+
+\end{lstlisting}
+
+
+
+
+
+
+
+\subsubsection{PremiereApplication.cpp}
+
+
+
+\begin{lstlisting}[caption={PremiereApplication.cpp: ajout d'une méthode pour la gestion de lumière et des ombres}]
+#include "PremiereApplication.h"
+
+void PremiereApplication::createScene()
+{
+    //creation d une entite
+    Entity *head= mSceneMgr->createEntity("Tete", "ogrehead.mesh" );
+    
+    //creation d un noeud
+    SceneNode *node= mSceneMgr->getRootSceneNode( )->createChildSceneNode( "nodeTete " , Vector3::ZERO, Quaternion::IDENTITY);
+    
+    node->yaw(Radian(Math::PI));
+    node->yaw(Radian(Math::PI));
+
+    //setPosition place le noeud aux coord passees en parametres
+    Vector3 position = Vector3(30.0, 50.0, 0.0);
+    node->setPosition(position);
+
+    node->setPosition(30.0, 50.0, 0.0); 
+    /*equivalent a
+    Vector3 position = Vector3(30.0, 50.0, 0.0);
+    node->setPosition(position);
+    */
+
+    //deplace le noeud par rapport a sa position actuelle
+    node->translate(-30.0, 50.0, 0.0); //par defaut la trnslt se fait par rap a TS_WORLD
+   
+    //attachement de l entite au noeud
+    node->attachObject(head);
+
+    //creation d un plan
+    Plane plan(Vector3::UNIT_Y, 0);
+
+    //creation d un mesh cad l objet 3d visible ds la scene
+    MeshManager::getSingleton().createPlane("sol",  ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, plan, 500, 500, 10, 10, true, 1, 1, 1, Vector3::UNIT_Z); 
+
+    //entite qui representera le plan
+    Entity *ent= mSceneMgr->createEntity("EntiteSol", "sol");
+
+    //ajout du materiau a l entite
+    ent->setMaterialName("Examples/GrassFloor");//texture de pelouse
+    /*les differents materiaux sont sous /media/materials/scritps, par ex:
+    ent->setMaterialName("Examples/WaterStream");//texture d eau animee*/
+
+    //creation d un noeud
+    node = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+    node->attachObject(ent);
+
+    createLux("ponctuelle", head);//lumiere ponctuelle
+    //createLux("directionnelle", head);//lumiere directionnelle
+    //createLux("spot", head);//lumiere projecteur
+}
+
+/*
+cree une lumiere selon le parametre passe:
+    createLux("ponctuelle"); -> lumiere ponctuelle
+    createLux("directionnelle"); -> lumiere directionnelle
+    createLux("spot"); -> lumiere projecteur
+    
+    le second parametre est l entite pour laquelle on active les ombres
+
+une lumiere noire est cree au debut de la methode
+
+une ombre est cree en fin de methode
+*/
+void PremiereApplication::createLux(std::string prmLightType, MovableObject * prmEnt)
+{
+    //application d une couleur noire
+    mSceneMgr->setAmbientLight(ColourValue(0.0, 0.0, 0.0)); 
+
+    //definition d une lumiere 
+    Light *light= mSceneMgr->createLight("lumiere1");
+
+    if (prmLightType == "ponctuelle")
+    {
+        //definition du type de lumiere
+        light->setType(Light::LT_POINT);//lumiere ponctuelle
+
+        //definition de la position de la lumiere
+        light->setPosition(-100, 200, 100);
+    }
+    else if (prmLightType == "directionnelle")
+    {
+        light->setType(Light::LT_DIRECTIONAL);//lumiere directionnelle
+        light->setDirection(10.0, -20.0, -5);//vecteur directeur de la lumiere directionnelle
+
+        //definition de la position de la lumiere
+        light->setPosition(-100, 200, 100);
+    }
+    else
+    {
+        light->setType(Light::LT_SPOTLIGHT);//lumiere directionnelle
+        light->setDirection(0.0, -1, 1);//vecteur directeur de la lumiere directionnelle
+        light->setSpotlightRange(Degree(30), Degree(60), 1.0);
+    }
+
+    //definition des couleur des lumieres diffuse
+    light->setDiffuseColour(1.0, 0.7, 0.1);
+    //et speculaire
+    light->setSpecularColour(1.0, 0.7, 0.1);
+
+    //ombre
+    //activation de la projection des ombres
+    light->setCastShadows(true);
+    prmEnt->setCastShadows(true);
+
+    //activation des ombres
+    mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
+
+}
+
+/*definit la position de notre point de vue*/
+void PremiereApplication::createCamera()
+{
+    //creation de la camera
+    mCamera = mSceneMgr->createCamera("Ma Camera");
+
+    //position de la camera
+    mCamera->setPosition(Vector3(-100.0, 150.0, 200.0));
+
+    //permet de determiner le point de la scene que regarde notre camera
+    mCamera->lookAt(Vector3(0.0, 100.0, 0.0));
+
+    //definition des distances de near clip et de far clip, qui
+    //sont les distances minimale et maximale auxquelles doit se
+    //trouver un objet pour etre afficher a l ecran.
+    mCamera->setNearClipDistance(1);
+    mCamera->setFarClipDistance(1000);
+}
+
+void PremiereApplication::createViewports()
+{
+    //la creation du Viewport, appelee par la fenetre et prenant en parametre la
+    //camera concernee, le premier parametre est la camera de laqll le contenu
+    //du viewport sera rendu, ce paramatre est le seul obligatoire
+    Viewport *vue = mWindow->addViewport(mCamera);
+    //Viewport *vue = mWindow->addViewport(mCamera, 0, 0, 0, 0.8, 0.8);
+
+    //Grace a ce Viewport nouvellement cree, nous allons faire coincider
+    //le rapport largeur / hauteur de notre camera avec celui du
+    //Viewport, pour avoir une image non deformee
+    mCamera->setAspectRatio(Real(vue->getActualWidth()) /  Real(vue->getActualHeight()));
+
+    //on definit ici la couleur de fond
+    //vue->setBackgroundColour(ColourValue(0.0, 0.0, 1.0));     //bleu
+    vue->setBackgroundColour(ColourValue(0.980, 0.502, 0.447)); //saumon
+
+   // creation d'un viewport dans le coin bas gauche
+   //les parametres autres que le premier sont obligatoires pour la definition
+   //de plusieurs viewport
+   Viewport* vue2 = mWindow->addViewport(mCamera, 1, 0, 0.8, 0.2, 0.2);
+   vue2->setBackgroundColour(ColourValue(0.561, 0.737, 0.561 ));  //darkseagreen
+}
+
+
+\end{lstlisting}
+
+
+
