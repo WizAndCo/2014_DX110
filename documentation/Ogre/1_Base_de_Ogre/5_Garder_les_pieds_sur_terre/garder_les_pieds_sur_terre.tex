@@ -50,7 +50,7 @@ endif(OGRE_Paging_FOUND)
 
 \subsubsection{Ajout d'attributs obligatoires pour le terrain}
 
-Commen\c{c}ons par ajouter deux attributs dans notre classe PremiereApplication.
+Commençons par ajouter deux attributs dans notre classe PremiereApplication.
 
 \begin{itemize}
 \item un objet Terrain, qui gérera les propriétés de notre terrain,
@@ -85,7 +85,7 @@ if (mRoot->getRenderSystem()->getCapabilities()->hasCapability(Ogre::RSC_INFINIT
 
 
 \subsubsection{Définition des éclairages}
-Plutôt que de gérer l'éclairage de fa\c{c}on distincte, on peut définir un éclairage d'ambiance particulier pour le terrain. Pour cela, il suffit de définir une lumière directionnelle avec les paramètres qui vous paraissent adaptés à votre environnement. 
+Plutôt que de gérer l'éclairage de façon distincte, on peut définir un éclairage d'ambiance particulier pour le terrain. Pour cela, il suffit de définir une lumière directionnelle avec les paramètres qui vous paraissent adaptés à votre environnement. 
 
 Ici cette lumière est ajoutée en tant qu'attribut de la classe, car je l'utiliserai dans une autre fonction.
 
@@ -117,7 +117,7 @@ void PremiereApplication::createTerrain()
 
 mGlobals est le premier objet d'Ogre que nous allons créer nous-mêmes, sans passer par l'intermédiaire du Scene Manager.
 
-Le moteur fournit différentes macros comme OGRE\_NEW\index{OGRE\_NEW} pour allouer l'espace en mémoire lorsque vous instanciez une classe d'Ogre. De fa\c{c}on générale, les développeurs conseillent d'utiliser ces macros lorsque vous devez faire de l'allocation dynamique sur les objets du moteur qui dérivent de Ogre::AllocatedObject. Vous pouvez voir la hiérarchie des classes dans la documentation.
+Le moteur fournit différentes macros comme OGRE\_NEW\index{OGRE\_NEW} pour allouer l'espace en mémoire lorsque vous instanciez une classe d'Ogre. De façon générale, les développeurs conseillent d'utiliser ces macros lorsque vous devez faire de l'allocation dynamique sur les objets du moteur qui dérivent de Ogre::AllocatedObject. Vous pouvez voir la hiérarchie des classes dans la documentation.
 
 En ce qui concerne la destruction des objets, l'utilisation de l'opérateur OGRE\_NEW implique l'utilisation de l'opérateur OGRE\_DELETE\index{OGRE\_DELETE} pour libérer l'espace mémoire.
 
@@ -172,7 +172,7 @@ Comme vous le voyez c'est une simple image en noir et blanc, et pourtant cela su
 
 En effet, si l'on utilise uniquement des niveaux de gris dans une image, chaque pixel peut prendre 256 valeurs, 0 correspondant au noir et à la hauteur la plus faible, 255 au blanc et à la plus forte altitude. On a donc 256 altitudes possibles pour notre terrain, ce qui est tout à fait honnête et suffit à la majorité des cas.
 
-En réalité, chaque pixel possède trois valeurs, correspondant à la quantité de rouge, de vert et de bleu, chacune de ces valeurs allant de 0 à 255. Or pour les niveaux de gris, ces trois valeurs doivent être identiques, ce qui laisse 255 triplets de valeurs : (0, 0, 0) pour le noir, puis les niveaux de gris et enfin (255, 255, 255) pour le blanc).
+En réalité, chaque pixel possède trois valeurs, correspondant à la quantité de rouge, de vert et de bleu, chacune de ces valeurs allant de 0 à 255. Or pour les niveaux de gris, ces trois valeurs doivent être identiques, ce qui laisse 255 triplets de valeurs: (0, 0, 0) pour le noir, puis les niveaux de gris et enfin (255, 255, 255) pour le blanc).
 
 Lors de la création d'un fichier heightmap, on fait en sorte que le point le plus haut de notre carte soit blanc et que le point le plus bas soit noir, afin d'utiliser toute la plage de valeurs disponibles dans la carte et éviter les dénivellations peu naturelles.
 
@@ -216,7 +216,7 @@ Les deux dernières valeurs minBatchSize \index{minBatchSize}\index{Terrain!minB
 \subsubsection{La Batch Size\index{Batch Size}\index{Terrain!Batch}}
 
 
-Le mot anglais batch signifie ''lot'' ou ''paquet''. L'affichage de modèle 3D à l'écran consommant beaucoup de ressources, plutôt que de chercher à calculer dans les moindres détails la fa\c{c}on dont appara\^it la pelouse à l'autre bout du paysage, pour ensuite ne l'afficher que sur une toute petite surface de l'écran, le moteur va simplifier les choses et calculer de fa\c{c}on grossière l'affichage de ces objets.
+Le mot anglais batch signifie ''lot'' ou ''paquet''. L'affichage de modèle 3D à l'écran consommant beaucoup de ressources, plutôt que de chercher à calculer dans les moindres détails la façon dont apparaît la pelouse à l'autre bout du paysage, pour ensuite ne l'afficher que sur une toute petite surface de l'écran, le moteur va simplifier les choses et calculer de façon grossière l'affichage de ces objets.
 
 Ainsi, les textures peuvent être simplifiées, mais aussi les meshs, dont l'ordinateur va réduire le nombre de vertices pour avoir moins de calculs à faire, vu que vous ne voyez pas les détails (on parle aussi de niveau de détail\index{niveau de détail}, ou LOD\index{LOD}).
 
@@ -225,7 +225,7 @@ Image utilisateur
 
 Le terrain est divisé en lots dont la taille varie en fonction de la distance de la caméra à ces lots. Plus on s'éloigne, plus le lot est simplifié par suppression de vertices. Lorsque plusieurs lots atteignent une taille minimale, ils sont regroupés en un seul lot, qui est à son tour simplifié progressivement si la caméra continue de reculer.
 
-La zone o\`u se situe la caméra est la plus détaillée, le reste est simplifié.
+La zone où se situe la caméra est la plus détaillée, le reste est simplifié.
 
 Si la taille minimum de batch est faible, les lots adjacents auront plus facilement un niveau de détail équivalent, mais il y aura plus de lots à gérer par l'ordinateur. En revanche, si elle est élevée, on regroupe plus rapidement les lots, mais les frontières entre ceux-ci sont plus facilement visibles, car le niveau de détail peut varier plus fortement.
 
@@ -236,7 +236,7 @@ taille=2n+1}
 
 \subsubsection{Mise en place des textures\index{texture}\index{Terrain!texture}}
 
-Pour gérer les textures, l'outil Terrain d'Ogre utilise des calques\index{calque}\index{Terrain!calque}. Chacun de ces calques correspond à une texture, que vous pourrez ensuite appliquer o\`u bon vous semblera.
+Pour gérer les textures, l'outil Terrain d'Ogre utilise des calques\index{calque}\index{Terrain!calque}. Chacun de ces calques correspond à une texture, que vous pourrez ensuite appliquer où bon vous semblera.
 
 Comme on parle de calques, autant vous dire tout de suite qu'il est possible de les superposer, de donner plus ou moins d'intensité à un calque, pour créer des effets élaborés.
 
@@ -329,40 +329,13 @@ Compilez et lancez l'application pour obtenir un joli paysage !
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 %---------------------------------------------------------------------------------------------------------------
 
 
 \section{Le plaquage de textures}
 
 
-Ogre nous permet d'utiliser différents calques pour nos matériaux. On va pouvoir mettre les calques les uns sur les autres, modifier leur opacité pour avoir une texture plus ou moins visible, tout en décidant de la zone o\`u l'on veut appliquer la texture.
+Ogre nous permet d'utiliser différents calques pour nos matériaux. On va pouvoir mettre les calques les uns sur les autres, modifier leur opacité pour avoir une texture plus ou moins visible, tout en décidant de la zone où l'on veut appliquer la texture.
 
 La première étape consiste à rajouter des calques dans notre liste, avant de créer le terrain. Remplacez le bloc que vous aviez par le code suivant, afin d'ajouter deux nouveaux matériaux.
 
@@ -387,9 +360,9 @@ mTerrain->prepare(imp);
 mTerrain->load();
 \end{lstlisting}
 
-Par défaut, c'est uniquement le premier matériau qui est affiché donc si vous exécutez le code maintenant, rien n'aura changé sur votre terrain.  Il est donc nécessaire d'ajouter quelques lignes pour dire de quelle fa\c{c}on nous voulons faire notre plaquage de texture.\newline
+Par défaut, c'est uniquement le premier matériau qui est affiché donc si vous exécutez le code maintenant, rien n'aura changé sur votre terrain.  Il est donc nécessaire d'ajouter quelques lignes pour dire de quelle façon nous voulons faire notre plaquage de texture.\newline
 
-Le principe est simple à comprendre, chaque calque d'un terrain possède un objet TerrainLayerBlendMap\index{TerrainLayerBlendMap}\index{Terrain!TerrainLayerBlendMap} (que j'appellerai dorénavant Blend Map\index{Blend Map}) qui exprime la fa\c{c}on dont le calque est fusionné avec les calques inférieurs (le calque le plus bas est le calque 0).
+Le principe est simple à comprendre, chaque calque d'un terrain possède un objet TerrainLayerBlendMap\index{TerrainLayerBlendMap}\index{Terrain!TerrainLayerBlendMap} (que j'appellerai dorénavant Blend Map\index{Blend Map}) qui exprime la façon dont le calque est fusionné avec les calques inférieurs (le calque le plus bas est le calque 0).
 
 Cette fusion\index{fusion de calques}\index{Terrain!fusion de calques} est simplement une affaire de transparence. Les calques sont placés les uns sur les autres, et la composante transparente indique si la texture en dessous est plus ou moins visible. Il est de plus possible de faire varier la transparence du calque en chaque point de celui-ci, ce qui permet d'avoir un placage par zone.\newline
 
@@ -500,7 +473,7 @@ Image utilisateur
 
 On va tout de suite essayer de faire quelque chose de plus esthétique.
 
-Pour cela, maintenant que vous avez saisi les grandes étapes, je vous propose un mini-TP pour vous entra\^iner.
+Pour cela, maintenant que vous avez saisi les grandes étapes, je vous propose un mini-TP pour vous entraîner.
 
 
 
@@ -518,7 +491,7 @@ Pour cela, maintenant que vous avez saisi les grandes étapes, je vous propose u
 Une image vaut s\^urement mieux qu'un long discours, voici donc ce que vous allez devoir obtenir :
 Image utilisateur
 
-L'idée est de texturer le terrain en fonction de l'altitude. Si l'on est en dessous d'un certain seuil, il n'y a que de la terre qui appara\^it ; au-dessus, on a de l'herbe.
+L'idée est de texturer le terrain en fonction de l'altitude. Si l'on est en dessous d'un certain seuil, il n'y a que de la terre qui apparaît ; au-dessus, on a de l'herbe.
 
 
 
@@ -1189,7 +1162,7 @@ En regardant la création du groupe de terrains, vous voyez que l'on a défini u
 mTerrainGroup->setFilenameConvention(Ogre::String("TerrainDuZero"), Ogre::String("dat"));
 \end{lstlisting}
 
-Cette ligne sert lors de la sauvegarde de fichiers de terrain : ceux-ci seront nommés en commen\c{c}ant par "TerrainDuZero" suivi d'un nombre permettant d'identifier le terrain, puis de l'extension de fichier "dat".
+Cette ligne sert lors de la sauvegarde de fichiers de terrain : ceux-ci seront nommés en commençant par "TerrainDuZero" suivi d'un nombre permettant d'identifier le terrain, puis de l'extension de fichier "dat".
 
 Pour utiliser la sauvegarde des terrains, nous allons ajouter un attribut mTerrainCreated à la classe PremiereApplication qui permettra de savoir si l'on a généré le terrain à partir d'une image ou bien si l'on a lu un fichier terrain. Dans le premier cas, on saura qu'à la fin de la méthode createTerrain() il faut penser à sauvegarder les fichiers de terrain pour le prochain lancement de l'application.
 

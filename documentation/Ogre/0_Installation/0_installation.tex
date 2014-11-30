@@ -33,21 +33,29 @@ Installation avec synaptic des packages suivants:
 
 \begin{itemize}
 \item Création d'un répertoire contenant les fichiers suivants:
+\end{itemize}
+
 
 \begin{lstlisting}
-Hraesvelg:~/Documents/workspace/3D/OGRE/ExampleApplication$ ls -l
+Hraesvelg:~/Documents/workspace/3D/OGRE/ExampleApplication> ls -l
 total 24
--rw-rw-r-- 1 olivier olivier 1109 fvr. 23 12:16 CMakeLists.txt
--rw-rw-r-- 1 olivier olivier  844 fvr. 23 12:02 helloworld.cpp
--rw-rw-r-- 1 olivier olivier 4894 fvr. 23 12:18 Makefile
--rw-r--r-- 1 olivier olivier  446 fvr. 23 12:20 plugins.cfg
--rw-r--r-- 1 olivier olivier 1391 fvr. 23 12:20 resources.cfg
+-rw-rw-r-- 1 oliver oliver 1109 fvr. 23 12:16 CMakeLists.txt
+-rw-rw-r-- 1 oliver oliver  844 fvr. 23 12:02 helloworld.cpp
+-rw-rw-r-- 1 oliver oliver 4894 fvr. 23 12:18 Makefile
+-rw-r--r-- 1 oliver oliver  446 fvr. 23 12:20 plugins.cfg
+-rw-r--r-- 1 oliver oliver 1391 fvr. 23 12:20 resources.cfg
 \end{lstlisting}
 
+
+
+
+\begin{itemize}
 \item helloworld.cpp:
+\end{itemize}
+
 
 \begin{lstlisting}
-#include ''ExampleApplication.h''
+\#include ''ExampleApplication.h''
  
 class TutorialApplication: public ExampleApplication
 {
@@ -94,6 +102,7 @@ int main(int argc, char **argv)
 \end{lstlisting}
 
 
+\begin{itemize}
 \item CMakeLists.txt est une copie modifiée du CMakeLists.txt donnée dans le tutoriel de compilation sous Ubuntu. Les lignes commencant par \# \~ sont les lignes originales que j'ai du modifier.
 \end{itemize}
 
@@ -116,19 +125,19 @@ include_directories (''/usr/share/OGRE-1.7.4/Samples/Common/include/'')
 find_package(OGRE REQUIRED)
 include_directories (${OGRE_INCLUDE_DIRS})
 
-# L'exemple depend aussi de OIS, une lib pour gerer la souris, clavier, joystick...
+\# L'exemple depend aussi de OIS, une lib pour gerer la souris, clavier, joystick...
 find_package(OIS REQUIRED)
 
-# On definit les sources qu'on veut compiler
+\# On definit les sources qu'on veut compiler
 SET(SOURCES
 helloworld.cpp)
 
-# On les compile
+\# On les compile
 add_executable (
 helloworld ${SOURCES}
 )
 
-# Et pour finir, on lie l'executable avec les librairies que find_package nous a gentillement trouve.
+\# Et pour finir, on lie l'executable avec les librairies que find_package nous a gentillement trouve.
 target_link_libraries(helloworld ${OGRE_LIBRARY} ${OIS_LIBRARY})
 %\end{lstlisting}
 
